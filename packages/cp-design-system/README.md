@@ -11,20 +11,21 @@ An animated, brand-themable design system for **React (web)** and **React Native
 
 ## One API, all platforms
 
-![The same Toggle settings screen rendered on the web, iOS and Android](https://raw.githubusercontent.com/roshanpatil2000/cp-design-system/main/docs/images/one-api-all-platforms.png)
+![The same settings screen, with Toggles and Buttons, rendered on the web, iOS and Android](https://raw.githubusercontent.com/roshanpatil2000/cp-design-system/main/docs/images/one-api-all-platforms.png)
 
 You write it once:
 
 ```tsx
-import { Toggle } from 'cp-design-system';
+import { Button, Toggle } from 'cp-design-system';
 
 <Toggle label="Wi-Fi" defaultChecked />
 <Toggle label="Dark mode" size="large" appearance="brand" />
+<Button appearance="primary" onPress={save}>Save</Button>
 ```
 
 How each platform renders it:
 
-- **Web:** a real `<button role="switch">`, animated with Motion.
+- **Web:** real `<button>` elements, animated with Motion.
 - **iOS and Android:** native views, animated on the UI thread with Reanimated and Gesture Handler.
 
 Your bundler picks the right build automatically.
@@ -136,10 +137,62 @@ import { atlassianLightColors, atlassianSpace, atlassianEasings } from 'cp-desig
 
 Each component is built and tested on both platforms before release.
 
-| Status  | Component                                                                                                                 |
-| ------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Ready   | [Toggle](#toggle)                                                                                                         |
-| Planned | Button, Text field, Checkbox, Radio, Select, Spinner, Lozenge, Badge, Flag (toast), Modal, Tooltip, Tabs, Avatar and more |
+| Status  | Component                                                                                                         |
+| ------- | ----------------------------------------------------------------------------------------------------------------- |
+| Ready   | [Button](#button), [Toggle](#toggle)                                                                              |
+| Planned | Text field, Checkbox, Radio, Select, Spinner, Lozenge, Badge, Flag (toast), Modal, Tooltip, Tabs, Avatar and more |
+
+### Button
+
+Atlassian's button (32px tall, or 24px with `spacing="compact"`) in six appearances, with motion on both platforms:
+
+- **Press:** springs down to 96% while held. Hover and pressed colors fade over 150ms, using Atlassian's button timing. Space and Enter press it visibly on the web.
+- **Loading:** the label fades out and a spinner fades in at the same size, so the layout never shifts. A loading button stays focusable but ignores presses and is announced as busy.
+- **Native touch:** an `'impactLight'` haptic on press, and the touch area is enlarged to 44pt (compact buttons too).
+- **Accessibility:** a native `<button>` on the web, with `aria-pressed` for `isSelected`; on native, the button role with disabled, busy and selected states.
+
+```tsx
+import { Button } from 'cp-design-system';
+
+<Button appearance="primary" onPress={save}>Save</Button>
+<Button appearance="subtle" spacing="compact">Cancel</Button>
+<Button appearance="primary" isLoading={saving} shouldFitContainer>Save changes</Button>
+
+// Icons receive the button's current color and size, so they always match
+<Button iconBefore={({ color, size }) => <PlusIcon color={color} size={size} />}>Create</Button>
+```
+
+| Prop                                    | Default     |                                                                                |
+| --------------------------------------- | ----------- | ------------------------------------------------------------------------------ |
+| `children`                              | (required)  | The label. Text is styled for you; other nodes render as they are              |
+| `onPress`                               |             | Click, tap, Enter or Space. Not called while disabled or loading               |
+| `appearance`                            | `'default'` | `'default'`, `'primary'`, `'subtle'`, `'warning'`, `'danger'` or `'discovery'` |
+| `spacing`                               | `'default'` | `'default'` (32px) or `'compact'` (24px)                                       |
+| `isDisabled`, `isLoading`, `isSelected` | `false`     | States; see above                                                              |
+| `shouldFitContainer`                    | `false`     | Stretch to the container's width                                               |
+| `iconBefore`, `iconAfter`               |             | An element, or `({ color, size }) => element`                                  |
+| `motion`                                | `'snappy'`  | Press spring: `'snappy'`, `'gentle'`, `'bouncy'`, a custom spring, or `false`  |
+| `tokens`                                |             | Override any style token for this instance                                     |
+| `accessibilityLabel`, `type`, `testID`  |             | Accessible name; `type` (`'button'`, `'submit'` or `'reset'`) is web only      |
+
+`appearance="primary"` follows your brand color, and the text switches to dark on light brands automatically.
+
+**Make it yours:**
+
+```ts
+createTheme({
+  brand: '#0E9F6E',
+  components: {
+    Button: {
+      defaultProps: { appearance: 'primary' },
+      tokens: { radius: 999, height: 40, paddingX: 20, pressScale: 0.92 },
+      motion: 'bouncy',
+    },
+  },
+});
+```
+
+Tokens: `height`, `paddingX`, `gap`, `radius`, `fontSize`, `lineHeight`, `fontWeight`, `fontFamily`, `background`, `backgroundHovered`, `backgroundPressed`, `text`, `border`, `borderWidth`, `backgroundDisabled`, `textDisabled`, `borderDisabled`, `iconSize`, `spinnerSize`, `pressScale`, `focusRing`, `focusRingWidth`, `focusRingGap`.
 
 ### Toggle
 

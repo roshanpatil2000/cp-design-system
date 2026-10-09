@@ -1,6 +1,13 @@
 import type { ReactNode } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import { ThemeProvider, Toggle, createTheme, fontWeightFor, useTheme } from 'cp-design-system';
+import {
+  Button,
+  ThemeProvider,
+  Toggle,
+  createTheme,
+  fontWeightFor,
+  useTheme,
+} from 'cp-design-system';
 
 // The same screen exists as a Storybook story (apps/storybook/stories/Showcase.stories.tsx),
 // used for the README's side-by-side screenshot. Keep the two in sync.
@@ -51,7 +58,7 @@ export function Showcase({ onBack }: { onBack: () => void }) {
         Settings
       </Text>
       <Text style={{ color: theme.color['color.text.subtle'], marginBottom: theme.space['200'] }}>
-        cp-design-system · Toggle
+        cp-design-system · Toggle · Button
       </Text>
       <Row label="Wi-Fi" hint="On">
         <Toggle label="Wi-Fi" defaultChecked />
@@ -70,6 +77,17 @@ export function Showcase({ onBack }: { onBack: () => void }) {
       <Row label="Airplane mode" hint="Disabled">
         <Toggle label="Airplane mode" isDisabled />
       </Row>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'flex-end',
+          gap: theme.space['100'],
+          marginTop: theme.space['300'],
+        }}
+      >
+        <Button appearance="subtle">Cancel</Button>
+        <Button appearance="primary">Save</Button>
+      </View>
     </View>
   );
 }

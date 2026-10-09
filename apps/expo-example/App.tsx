@@ -13,6 +13,7 @@ import * as Haptics from 'expo-haptics';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import {
+  Button,
   ThemeProvider,
   Toggle,
   atlassianTheme,
@@ -85,6 +86,35 @@ function SettingRow({ label, children }: { label: string; children: React.ReactN
 }
 
 /** Controlled toggle that "saves" for a moment, showing the loading pulse. */
+/** Full-width primary button that "saves" for a moment, showing the loading crossfade. */
+function AsyncSaveButton() {
+  const [saving, setSaving] = useState(false);
+  const [count, setCount] = useState(0);
+  const theme = useTheme();
+  return (
+    <View style={{ gap: theme.space['075'] }}>
+      <Button
+        appearance="primary"
+        shouldFitContainer
+        isLoading={saving}
+        testID="save"
+        onPress={() => {
+          setSaving(true);
+          setTimeout(() => {
+            setSaving(false);
+            setCount((c) => c + 1);
+          }, 1200);
+        }}
+      >
+        Save changes
+      </Button>
+      <Text style={{ color: theme.color['color.text.subtle'], fontSize: 12 }}>
+        {`Saved ${count} time(s)`}
+      </Text>
+    </View>
+  );
+}
+
 function AsyncToggleRow() {
   const [on, setOn] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -241,6 +271,26 @@ function Foundations({
             testID="reduce-motion"
           />
         </SettingRow>
+      </View>
+
+      <View style={{ gap: theme.space['150'] }}>
+        <Heading>Button</Heading>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.space['100'] }}>
+          <Button>Default</Button>
+          <Button appearance="primary">Primary</Button>
+          <Button appearance="subtle">Subtle</Button>
+          <Button appearance="warning">Warning</Button>
+          <Button appearance="danger">Danger</Button>
+          <Button appearance="discovery">Discovery</Button>
+        </View>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.space['100'] }}>
+          <Button spacing="compact">Compact</Button>
+          <Button isSelected>Selected</Button>
+          <Button appearance="primary" isDisabled>
+            Disabled
+          </Button>
+        </View>
+        <AsyncSaveButton />
       </View>
 
       <View style={{ gap: theme.space['150'] }}>

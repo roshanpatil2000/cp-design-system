@@ -22,6 +22,14 @@ export type {
 } from './theme/context';
 export { resolveTokens, resolveSpring } from './theme/component';
 
+export type {
+  ButtonProps,
+  ButtonAppearance,
+  ButtonSpacing,
+  ButtonIcon,
+} from './components/Button/Button.types';
+export type { ButtonTokens } from './components/Button/Button.tokens';
+export { getButtonTokens } from './components/Button/Button.tokens';
 export type { ToggleProps, ToggleSize, ToggleAppearance } from './components/Toggle/Toggle.types';
 export type { ToggleTokens } from './components/Toggle/Toggle.tokens';
 export { getToggleTokens } from './components/Toggle/Toggle.tokens';

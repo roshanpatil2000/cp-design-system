@@ -1,6 +1,6 @@
 {
   "name": "cp-design-system",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Cross-platform design system for React (web) and React Native, sharing one set of tokens and component APIs.",
   "license": "MIT",
   "author": "roshanpatil2000",
@@ -42,7 +42,8 @@
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "sync-tokens": "node scripts/sync-atlassian-tokens.mjs && prettier --write src/tokens/atlassian",

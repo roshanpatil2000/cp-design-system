@@ -7,7 +7,7 @@ An animated, brand-themable design system for **React (web)** and **React Native
 - **Motion built in.** Springs run on Reanimated (native) and Motion (web), driven by the same tokens. The OS "reduce motion" setting is respected automatically.
 - **Your brand, not ours.** One brand color re-themes every brand, selection, focus and link token in both modes, with WCAG contrast enforced. Every component can be restyled globally or per instance.
 
-> **Status:** the theme and motion foundation is ready. Components are being added one at a time; see [Components](#components).
+> **Status:** 0.2.0 ships the theme and motion foundation, **Button** and **Toggle**. More components are added one at a time; see [Components](#components) and the [changelog](https://github.com/roshanpatil2000/cp-design-system/blob/main/packages/cp-design-system/CHANGELOG.md).
 
 ## One API, all platforms
 

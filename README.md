@@ -2,6 +2,12 @@
 
 Animated, brand-themable design system for React (web) and React Native, built on Atlassian's design tokens. Published to npm as [`cp-design-system`](https://www.npmjs.com/package/cp-design-system). Package docs: [packages/cp-design-system/README.md](packages/cp-design-system/README.md).
 
+## One API, all platforms
+
+![The same Toggle settings screen rendered on the web, iOS and Android](docs/images/one-api-all-platforms.png)
+
+One `<Toggle />` from `cp-design-system`, rendered natively on each platform: the DOM with Motion on the web, and native views with Reanimated and Gesture Handler on iOS and Android. The screen is `apps/storybook/stories/Showcase.stories.tsx` on the web and `apps/expo-example/Showcase.tsx` on mobile. To regenerate the image, see [docs/showcase](docs/showcase/README.md).
+
 ## How it works
 
 **Tokens.** `yarn workspace cp-design-system sync-tokens` reads Atlassian's raw tokens from `@atlaskit/tokens` (a pinned dev dependency) and writes typed files to `src/tokens/atlassian/*.generated.ts`. Those files are committed, so the published package doesn't depend on Atlaskit. CI fails if they drift from the pinned version.

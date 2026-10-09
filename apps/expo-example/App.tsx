@@ -1,5 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Pressable, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import {
+  Platform,
+  Pressable,
+  StatusBar as RNStatusBar,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as Haptics from 'expo-haptics';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -19,6 +27,7 @@ import {
   type ThemeColor,
   type ThemePair,
 } from 'cp-design-system';
+import { Showcase } from './Showcase';
 
 const brands: Record<string, ThemePair> = {
   Atlassian: atlassianTheme,
@@ -143,6 +152,7 @@ function Foundations({
   setDark,
   reduced,
   setReduced,
+  openShowcase,
 }: {
   brand: string;
   setBrand: (b: string) => void;
@@ -150,6 +160,7 @@ function Foundations({
   setDark: (v: boolean) => void;
   reduced: boolean;
   setReduced: (v: boolean) => void;
+  openShowcase: () => void;
 }) {
   const theme = useTheme();
   const emit = useHaptics();
@@ -168,6 +179,11 @@ function Foundations({
       >
         cp-design-system
       </Text>
+      <Pressable onPress={openShowcase} accessibilityRole="button" testID="open-showcase">
+        <Text style={{ color: theme.color['color.link'], fontSize: theme.text.body.fontSize }}>
+          Open showcase ›
+        </Text>
+      </Pressable>
 
       <View>
         <Heading>Brand</Heading>
@@ -298,6 +314,7 @@ export default function App() {
   const [brand, setBrand] = useState('Atlassian');
   const [dark, setDark] = useState(false);
   const [reduced, setReduced] = useState(false);
+  const [showcase, setShowcase] = useState(false);
   const pair = brands[brand] ?? atlassianTheme;
   const surface = pair[dark ? 'dark' : 'light'].color['elevation.surface'];
 
@@ -310,15 +327,27 @@ export default function App() {
         haptics={haptics}
       >
         <StatusBar style={dark ? 'light' : 'dark'} />
-        <SafeAreaView style={{ flex: 1, backgroundColor: surface }}>
-          <Foundations
-            brand={brand}
-            setBrand={setBrand}
-            dark={dark}
-            setDark={setDark}
-            reduced={reduced}
-            setReduced={setReduced}
-          />
+        <SafeAreaView
+          style={{
+            flex: 1,
+            backgroundColor: surface,
+            // SafeAreaView only pads on iOS; leave room for the Android status bar too.
+            paddingTop: Platform.OS === 'android' ? RNStatusBar.currentHeight : 0,
+          }}
+        >
+          {showcase ? (
+            <Showcase onBack={() => setShowcase(false)} />
+          ) : (
+            <Foundations
+              brand={brand}
+              setBrand={setBrand}
+              dark={dark}
+              setDark={setDark}
+              reduced={reduced}
+              setReduced={setReduced}
+              openShowcase={() => setShowcase(true)}
+            />
+          )}
         </SafeAreaView>
       </ThemeProvider>
     </GestureHandlerRootView>

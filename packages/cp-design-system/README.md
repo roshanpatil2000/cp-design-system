@@ -3,11 +3,31 @@
 An animated, brand-themable design system for **React (web)** and **React Native**, built on [Atlassian's design tokens](https://atlassian.design/foundations/tokens/design-tokens).
 
 - **Atlassian's design language.** About 340 semantic colors (light and dark), spacing, radius, typography and motion, generated from `@atlaskit/tokens`. Atlaskit itself is not a runtime dependency.
-- **One API, two platforms.** Each component renders with the DOM on the web and with native views on iOS and Android.
+- **One API, all platforms.** Each component renders with the DOM on the web and with native views on iOS and Android.
 - **Motion built in.** Springs run on Reanimated (native) and Motion (web), driven by the same tokens. The OS "reduce motion" setting is respected automatically.
 - **Your brand, not ours.** One brand color re-themes every brand, selection, focus and link token in both modes, with WCAG contrast enforced. Every component can be restyled globally or per instance.
 
 > **Status:** the theme and motion foundation is ready. Components are being added one at a time; see [Components](#components).
+
+## One API, all platforms
+
+![The same Toggle settings screen rendered on the web, iOS and Android](https://raw.githubusercontent.com/roshanpatil2000/cp-design-system/main/docs/images/one-api-all-platforms.png)
+
+You write it once:
+
+```tsx
+import { Toggle } from 'cp-design-system';
+
+<Toggle label="Wi-Fi" defaultChecked />
+<Toggle label="Dark mode" size="large" appearance="brand" />
+```
+
+How each platform renders it:
+
+- **Web:** a real `<button role="switch">`, animated with Motion.
+- **iOS and Android:** native views, animated on the UI thread with Reanimated and Gesture Handler.
+
+Your bundler picks the right build automatically.
 
 ## Install
 

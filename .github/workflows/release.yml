@@ -1,35 +1,59 @@
 name: Release
 
+# Publishes to npm when a push to main contains a package version that isn't on npm yet.
+# Bump the version in your PR (`npm version patch` in packages/cp-design-system) to release it.
 on:
   push:
     branches: [main]
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 permissions:
-  contents: write
-  pull-requests: write
-  id-token: write # npm provenance
+  contents: write # push the version tag
+  id-token: write # npm trusted publishing (OIDC), no NPM_TOKEN needed
 
 jobs:
-  release:
+  publish:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/cp-design-system
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: yarn
           registry-url: https://registry.npmjs.org
-      - run: yarn install --frozen-lockfile
-      - run: yarn test
-      # Opens a "Version Packages" PR when changesets exist; publishes to npm once that PR is merged.
-      - uses: changesets/action@v1
-        with:
-          version: yarn version-packages
-          publish: yarn release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
+
+      - name: Check whether this version is already on npm
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          PUBLISHED=$(npm view "cp-design-system@$VERSION" version 2>/dev/null || true)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if [ "$PUBLISHED" = "$VERSION" ]; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::cp-design-system@$VERSION is already on npm. Bump the version to release."
+          else
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::Publishing cp-design-system@$VERSION"
+          fi
+
+      # Trusted publishing needs npm >= 11.5.1.
+      - if: steps.version.outputs.publish == 'true'
+        run: npm install -g npm@latest
+
+      - if: steps.version.outputs.publish == 'true'
+        run: yarn install --frozen-lockfile
+
+      # prepublishOnly runs typecheck, tests and build before uploading.
+      - if: steps.version.outputs.publish == 'true'
+        run: npm publish
+
+      - if: steps.version.outputs.publish == 'true'
+        run: |
+          git tag "v${{ steps.version.outputs.version }}"
+          git push origin "v${{ steps.version.outputs.version }}"

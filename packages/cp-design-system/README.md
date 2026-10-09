@@ -1,83 +1,126 @@
 # cp-design-system
 
-A cross-platform design system for **React (web)** and **React Native**. One set of design tokens and one component API, with native rendering on each platform: DOM elements on the web, `View`/`Text`/`Pressable` on mobile. Web apps don't need `react-native-web`.
+An animated, brand-themable design system for **React (web)** and **React Native**, built on [Atlassian's design tokens](https://atlassian.design/foundations/tokens/design-tokens).
+
+- **Atlassian's design language.** About 340 semantic colors (light and dark), spacing, radius, typography and motion, generated from `@atlaskit/tokens`. Atlaskit itself is not a runtime dependency.
+- **One API, two platforms.** Each component renders with the DOM on the web and with native views on iOS and Android.
+- **Motion built in.** Springs run on Reanimated (native) and Motion (web), driven by the same tokens. The OS "reduce motion" setting is respected automatically.
+- **Your brand, not ours.** One brand color re-themes every brand, selection, focus and link token in both modes, with WCAG contrast enforced. Every component can be restyled globally or per instance.
+
+> **Status:** the theme and motion foundation is ready. Components are being added one at a time; see [Components](#components).
 
 ## Install
 
 ```bash
-npm install cp-design-system
-# or
 yarn add cp-design-system
-# or
-pnpm add cp-design-system
 ```
 
-Peer dependencies: `react >= 18`, and `react-native >= 0.74` for native apps only.
+**React Native / Expo** also needs the animation libraries, which you probably have already:
 
-## Usage
+```bash
+npx expo install react-native-reanimated react-native-worklets react-native-gesture-handler
+```
 
-The import is the same on every platform. The bundler picks the right build automatically:
+Web apps need nothing extra. The web build never imports React Native.
 
-| Bundler                      | Build used                                            |
-| ---------------------------- | ----------------------------------------------------- |
-| Metro (React Native / Expo)  | `dist/native` via the `react-native` export condition |
-| Vite, webpack, Next.js, etc. | `dist/web` (ESM or CJS)                               |
+## Set up the provider
 
 ```tsx
-import { ThemeProvider, VStack, Text, Button, Input } from 'cp-design-system';
+import { ThemeProvider, createTheme } from 'cp-design-system';
 
-export function SignIn() {
-  const [email, setEmail] = useState('');
+const theme = createTheme({ brand: '#7C3AED' });
+
+export function App() {
   return (
-    <ThemeProvider theme="light">
-      <VStack gap={4} p={6}>
-        <Text variant="heading">Welcome back</Text>
-        <Input label="Email" keyboardType="email" value={email} onChangeText={setEmail} />
-        <Button onPress={() => signIn(email)} fullWidth>
-          Sign in
-        </Button>
-      </VStack>
+    <ThemeProvider theme={theme} colorMode="system">
+      {/* your app */}
     </ThemeProvider>
   );
 }
 ```
 
-## Components
+| Prop        | Default    | What it does                                                                                       |
+| ----------- | ---------- | -------------------------------------------------------------------------------------------------- |
+| `theme`     | Atlassian  | A pair from `createTheme()` or a single theme                                                      |
+| `colorMode` | `'light'`  | `'light'`, `'dark'` or `'system'` (follows the OS or browser)                                      |
+| `motion`    | `'system'` | `'system'` respects "reduce motion"; `'reduced'` makes all motion instant; `'full'` ignores the OS |
+| `haptics`   | none       | Function called with events like `'selection'` (see below)                                         |
 
-| Component                   | Key props                                                                                                                                                 |
-| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Box`                       | `p`, `px`, `py`, `m`, `mx`, `my`, `bg`, `radius`, `borderColor`, `borderWidth`, `direction`, `align`, `justify`, `gap`, `wrap`, `flex`, `width`, `height` |
-| `Stack`, `VStack`, `HStack` | everything on `Box`; `gap` defaults to `3`                                                                                                                |
-| `Text`                      | `variant` (`title` · `heading` · `subheading` · `body` · `label` · `caption`), `color`, `weight`, `align`, `numberOfLines`                                |
-| `Button`                    | `variant` (`solid` · `outline` · `ghost`), `tone` (`primary` · `danger`), `size`, `disabled`, `fullWidth`, `onPress`                                      |
-| `Input`                     | `value`, `onChangeText`, `label`, `helperText`, `error`, `placeholder`, `secureTextEntry`, `keyboardType`, `disabled`                                     |
-| `Card`                      | `padding`, `elevated`                                                                                                                                     |
-| `Badge`                     | `tone` (`neutral` · `primary` · `success` · `warning` · `danger`)                                                                                         |
+## Make it yours
 
-Every component accepts `testID`. On the web it becomes `data-testid`.
+Everything is optional. Start with just `brand`.
 
-## Theming
+```ts
+const theme = createTheme({
+  // One color re-themes brand, selected, focus and link tokens in light and dark mode.
+  // It becomes your exact primary color in light mode; dark mode gets a matching lighter shade.
+  brand: '#7C3AED', // or { light: '#7C3AED', dark: '#C4B5FD' } to pin both
+
+  // Override any of Atlassian's semantic tokens, for one or both modes.
+  colors: { light: { 'color.border.focused': '#F97316' } },
+
+  radius: { medium: 10, large: 14 },
+  fontFamily: { body: 'Inter', heading: 'Inter' },
+  text: { body: { fontSize: 15 } },
+
+  // Tune the feel of every animation.
+  motion: { springs: { snappy: { stiffness: 600, damping: 30, mass: 1 } } },
+
+  // Per-component defaults and style tokens (available as components ship).
+  components: {},
+});
+```
+
+Light brand colors are handled for you. Text on the brand color switches to dark when needed, and brand text, links, icons and focus rings are darkened (or lightened in dark mode) until they meet WCAG contrast (4.5:1 for text, 3:1 for icons and borders).
+
+### Haptics (native)
+
+Components emit haptic events; you decide what they do. With Expo:
 
 ```tsx
-import { ThemeProvider, createTheme, lightTheme, useTheme } from 'cp-design-system';
+import * as Haptics from 'expo-haptics';
 
-// Built-in: theme="light" | "dark". Or extend one:
-const brand = createTheme(lightTheme, { name: 'brand', colors: { primary: '#7c3aed' } });
-
-export const App = () => <ThemeProvider theme={brand}>{/* … */}</ThemeProvider>;
-
-// Read tokens inside your own components:
-const { colors, spacing } = useTheme();
+<ThemeProvider
+  haptics={(event) =>
+    event === 'selection'
+      ? Haptics.selectionAsync()
+      : Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+  }
+/>;
 ```
+
+### Read the theme in your own components
+
+```tsx
+import { useTheme, useReducedMotion } from 'cp-design-system';
+
+const theme = useTheme();
+theme.color['color.background.brand.bold'];
+theme.space['200']; // 16
+theme.radius.medium; // 6
+theme.text['heading.small']; // { fontSize, lineHeight, fontWeight }
+theme.motion.springs.snappy; // { stiffness, damping, mass }
+```
+
+On React Native, use `fontWeightFor(theme.text.body.fontWeight)`. React Native only accepts weights in steps of 100.
 
 ## Tokens only
 
-Raw tokens are available on their own, with no React components:
+The raw Atlassian tokens are available without React:
 
 ```ts
-import { palette, spacing, radii, fontSizes } from 'cp-design-system/tokens';
+import { atlassianLightColors, atlassianSpace, atlassianEasings } from 'cp-design-system/tokens';
 ```
+
+## Components
+
+Each component is built and tested on both platforms before release.
+
+| Status      | Component                                                                                                                 |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------- |
+| In progress | Toggle                                                                                                                    |
+| Planned     | Button, Text field, Checkbox, Radio, Select, Spinner, Lozenge, Badge, Flag (toast), Modal, Tooltip, Tabs, Avatar and more |
 
 ## License
 
-MIT
+MIT. Design tokens are derived from [`@atlaskit/tokens`](https://www.npmjs.com/package/@atlaskit/tokens) (Apache-2.0).

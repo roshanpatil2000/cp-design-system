@@ -13,6 +13,12 @@ export default tseslint.config(
       sourceType: 'commonjs',
       globals: { module: 'writable', require: 'readonly' },
     },
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
+  },
+  {
+    // Node scripts.
+    files: ['**/scripts/**/*.mjs'],
+    languageOptions: { globals: { console: 'readonly', process: 'readonly' } },
   },
   {
     files: ['**/*.{ts,tsx}'],

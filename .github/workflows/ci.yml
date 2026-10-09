@@ -15,6 +15,8 @@ jobs:
           node-version: 22
           cache: yarn
       - run: yarn install --frozen-lockfile
+      - name: Generated Atlassian tokens are up to date
+        run: yarn workspace cp-design-system sync-tokens && git diff --exit-code -- packages/cp-design-system/src/tokens
       - run: yarn lint
       - run: yarn format:check
       - run: yarn typecheck

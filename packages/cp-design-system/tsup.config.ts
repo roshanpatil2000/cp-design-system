@@ -1,6 +1,14 @@
 import { defineConfig } from 'tsup';
 
-const external = ['react', 'react-dom', 'react-native'];
+const external = [
+  'react',
+  'react-dom',
+  'react-native',
+  'react-native-reanimated',
+  'react-native-worklets',
+  'react-native-gesture-handler',
+  'motion',
+];
 
 export default defineConfig([
   // Web: ESM + CJS, never references react-native.

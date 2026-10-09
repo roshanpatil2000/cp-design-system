@@ -21,6 +21,10 @@ export type {
   HapticsAdapter,
 } from './theme/context';
 export { resolveTokens, resolveSpring } from './theme/component';
+
+export type { ToggleProps, ToggleSize, ToggleAppearance } from './components/Toggle/Toggle.types';
+export type { ToggleTokens } from './components/Toggle/Toggle.tokens';
+export { getToggleTokens } from './components/Toggle/Toggle.tokens';
 export type {
   Theme,
   ThemePair,

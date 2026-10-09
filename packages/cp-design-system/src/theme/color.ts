@@ -89,6 +89,15 @@ export function oklchToRgb(color: Oklch): Rgba {
   return { r: fromLinear(lin.r), g: fromLinear(lin.g), b: fromLinear(lin.b), a: 1 };
 }
 
+/** Linear blend of two hex colors (alpha included). `t` = 0 gives `a`, 1 gives `b`. */
+export function mixHex(a: string, b: string, t: number): string {
+  const x = parseHex(a);
+  const y = parseHex(b);
+  const k = Math.min(1, Math.max(0, t));
+  const lerp = (p: number, q: number) => p + (q - p) * k;
+  return toHex({ r: lerp(x.r, y.r), g: lerp(x.g, y.g), b: lerp(x.b, y.b), a: lerp(x.a, y.a) });
+}
+
 /** WCAG 2 relative luminance of an opaque color. */
 export function luminance(hex: string): number {
   const { r, g, b } = parseHex(hex);

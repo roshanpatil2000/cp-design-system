@@ -1,3 +1,5 @@
+import type { ToggleProps } from '../components/Toggle/Toggle.types';
+import type { ToggleTokens } from '../components/Toggle/Toggle.tokens';
 import type { ColorToken } from '../tokens/atlassian/colors.generated';
 import type { atlassianOpacity } from '../tokens/atlassian/colors.generated';
 import type { atlassianSpace } from '../tokens/atlassian/spacing.generated';
@@ -63,10 +65,11 @@ export interface ComponentTheme<Props, Tokens> {
 
 /**
  * Component customizations by component name. Each component adds its own entry here
- * (for example `Toggle?: ComponentTheme<ToggleProps, ToggleTokens>`) as it is built.
+ * as it is built.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface ComponentThemes {}
+export interface ComponentThemes {
+  Toggle?: ComponentTheme<ToggleProps, ToggleTokens>;
+}
 
 export type MotionOverride = false | SpringName | SpringConfig;
 

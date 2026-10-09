@@ -1,11 +1,20 @@
 import { useEffect, useState } from 'react';
-import { Pressable, SafeAreaView, ScrollView, Switch, Text, View } from 'react-native';
+import {
+  Platform,
+  Pressable,
+  StatusBar as RNStatusBar,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as Haptics from 'expo-haptics';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import {
   ThemeProvider,
+  Toggle,
   atlassianTheme,
   createTheme,
   fontWeightFor,
@@ -18,6 +27,7 @@ import {
   type ThemeColor,
   type ThemePair,
 } from 'cp-design-system';
+import { Showcase } from './Showcase';
 
 const brands: Record<string, ThemePair> = {
   Atlassian: atlassianTheme,
@@ -59,6 +69,41 @@ function Heading({ children }: { children: string }) {
     >
       {children}
     </Text>
+  );
+}
+
+function SettingRow({ label, children }: { label: string; children: React.ReactNode }) {
+  const theme = useTheme();
+  return (
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Text style={{ color: theme.color['color.text'], fontSize: theme.text.body.fontSize }}>
+        {label}
+      </Text>
+      {children}
+    </View>
+  );
+}
+
+/** Controlled toggle that "saves" for a moment, showing the loading pulse. */
+function AsyncToggleRow() {
+  const [on, setOn] = useState(false);
+  const [saving, setSaving] = useState(false);
+  return (
+    <SettingRow label={saving ? 'Saving…' : `Sync: ${on ? 'on' : 'off'}`}>
+      <Toggle
+        label="Sync"
+        size="large"
+        isChecked={on}
+        isLoading={saving}
+        onChange={(next) => {
+          setSaving(true);
+          setTimeout(() => {
+            setOn(next);
+            setSaving(false);
+          }, 1200);
+        }}
+      />
+    </SettingRow>
   );
 }
 
@@ -107,6 +152,7 @@ function Foundations({
   setDark,
   reduced,
   setReduced,
+  openShowcase,
 }: {
   brand: string;
   setBrand: (b: string) => void;
@@ -114,6 +160,7 @@ function Foundations({
   setDark: (v: boolean) => void;
   reduced: boolean;
   setReduced: (v: boolean) => void;
+  openShowcase: () => void;
 }) {
   const theme = useTheme();
   const emit = useHaptics();
@@ -132,6 +179,11 @@ function Foundations({
       >
         cp-design-system
       </Text>
+      <Pressable onPress={openShowcase} accessibilityRole="button" testID="open-showcase">
+        <Text style={{ color: theme.color['color.link'], fontSize: theme.text.body.fontSize }}>
+          Open showcase ›
+        </Text>
+      </Pressable>
 
       <View>
         <Heading>Brand</Heading>
@@ -168,19 +220,44 @@ function Foundations({
         </View>
       </View>
 
-      <View style={{ gap: theme.space['100'] }}>
-        <View
-          style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
-        >
-          <Text style={text}>Dark mode</Text>
-          <Switch value={dark} onValueChange={setDark} />
-        </View>
-        <View
-          style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
-        >
-          <Text style={text}>Reduce motion</Text>
-          <Switch value={reduced} onValueChange={setReduced} />
-        </View>
+      <View style={{ gap: theme.space['150'] }}>
+        <SettingRow label="Dark mode">
+          <Toggle
+            label="Dark mode"
+            size="large"
+            appearance="brand"
+            isChecked={dark}
+            onChange={setDark}
+            testID="dark-mode"
+          />
+        </SettingRow>
+        <SettingRow label="Reduce motion">
+          <Toggle
+            label="Reduce motion"
+            size="large"
+            appearance="brand"
+            isChecked={reduced}
+            onChange={setReduced}
+            testID="reduce-motion"
+          />
+        </SettingRow>
+      </View>
+
+      <View style={{ gap: theme.space['150'] }}>
+        <Heading>Toggle</Heading>
+        <SettingRow label="Regular · success">
+          <Toggle label="Regular success" defaultChecked />
+        </SettingRow>
+        <SettingRow label="Large · brand">
+          <Toggle label="Large brand" size="large" appearance="brand" />
+        </SettingRow>
+        <SettingRow label="Bouncy spring (drag me)">
+          <Toggle label="Bouncy" size="large" motion="bouncy" testID="bouncy" />
+        </SettingRow>
+        <SettingRow label="Disabled">
+          <Toggle label="Disabled" isDisabled defaultChecked />
+        </SettingRow>
+        <AsyncToggleRow />
       </View>
 
       <View>
@@ -237,6 +314,7 @@ export default function App() {
   const [brand, setBrand] = useState('Atlassian');
   const [dark, setDark] = useState(false);
   const [reduced, setReduced] = useState(false);
+  const [showcase, setShowcase] = useState(false);
   const pair = brands[brand] ?? atlassianTheme;
   const surface = pair[dark ? 'dark' : 'light'].color['elevation.surface'];
 
@@ -249,15 +327,27 @@ export default function App() {
         haptics={haptics}
       >
         <StatusBar style={dark ? 'light' : 'dark'} />
-        <SafeAreaView style={{ flex: 1, backgroundColor: surface }}>
-          <Foundations
-            brand={brand}
-            setBrand={setBrand}
-            dark={dark}
-            setDark={setDark}
-            reduced={reduced}
-            setReduced={setReduced}
-          />
+        <SafeAreaView
+          style={{
+            flex: 1,
+            backgroundColor: surface,
+            // SafeAreaView only pads on iOS; leave room for the Android status bar too.
+            paddingTop: Platform.OS === 'android' ? RNStatusBar.currentHeight : 0,
+          }}
+        >
+          {showcase ? (
+            <Showcase onBack={() => setShowcase(false)} />
+          ) : (
+            <Foundations
+              brand={brand}
+              setBrand={setBrand}
+              dark={dark}
+              setDark={setDark}
+              reduced={reduced}
+              setReduced={setReduced}
+              openShowcase={() => setShowcase(true)}
+            />
+          )}
         </SafeAreaView>
       </ThemeProvider>
     </GestureHandlerRootView>

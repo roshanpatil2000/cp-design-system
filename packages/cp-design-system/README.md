@@ -3,11 +3,31 @@
 An animated, brand-themable design system for **React (web)** and **React Native**, built on [Atlassian's design tokens](https://atlassian.design/foundations/tokens/design-tokens).
 
 - **Atlassian's design language.** About 340 semantic colors (light and dark), spacing, radius, typography and motion, generated from `@atlaskit/tokens`. Atlaskit itself is not a runtime dependency.
-- **One API, two platforms.** Each component renders with the DOM on the web and with native views on iOS and Android.
+- **One API, all platforms.** Each component renders with the DOM on the web and with native views on iOS and Android.
 - **Motion built in.** Springs run on Reanimated (native) and Motion (web), driven by the same tokens. The OS "reduce motion" setting is respected automatically.
 - **Your brand, not ours.** One brand color re-themes every brand, selection, focus and link token in both modes, with WCAG contrast enforced. Every component can be restyled globally or per instance.
 
 > **Status:** the theme and motion foundation is ready. Components are being added one at a time; see [Components](#components).
+
+## One API, all platforms
+
+![The same Toggle settings screen rendered on the web, iOS and Android](https://raw.githubusercontent.com/roshanpatil2000/cp-design-system/main/docs/images/one-api-all-platforms.png)
+
+You write it once:
+
+```tsx
+import { Toggle } from 'cp-design-system';
+
+<Toggle label="Wi-Fi" defaultChecked />
+<Toggle label="Dark mode" size="large" appearance="brand" />
+```
+
+How each platform renders it:
+
+- **Web:** a real `<button role="switch">`, animated with Motion.
+- **iOS and Android:** native views, animated on the UI thread with Reanimated and Gesture Handler.
+
+Your bundler picks the right build automatically.
 
 ## Install
 
@@ -116,10 +136,62 @@ import { atlassianLightColors, atlassianSpace, atlassianEasings } from 'cp-desig
 
 Each component is built and tested on both platforms before release.
 
-| Status      | Component                                                                                                                 |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------- |
-| In progress | Toggle                                                                                                                    |
-| Planned     | Button, Text field, Checkbox, Radio, Select, Spinner, Lozenge, Badge, Flag (toast), Modal, Tooltip, Tabs, Avatar and more |
+| Status  | Component                                                                                                                 |
+| ------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Ready   | [Toggle](#toggle)                                                                                                         |
+| Planned | Button, Text field, Checkbox, Radio, Select, Spinner, Lozenge, Badge, Flag (toast), Modal, Tooltip, Tabs, Avatar and more |
+
+### Toggle
+
+Atlassian's toggle (32×16, or 40×20 with `size="large"`), with motion on both platforms:
+
+- **Thumb motion:** the thumb springs into place, squishes while pressed, and squashes against the edge instead of overshooting.
+- **Track and icons:** the track color follows the thumb, and the check and cross icons fade and scale.
+- **Drag to toggle:** drag past halfway or flick. On native this runs on the UI thread via Gesture Handler.
+- **Native touch:** a `'selection'` haptic fires on change, and the touch area is enlarged to 44pt.
+- **Accessibility:** web uses `role="switch"` with Space and Enter; native exposes the switch role and works with VoiceOver and TalkBack.
+
+```tsx
+import { Toggle } from 'cp-design-system';
+
+// Uncontrolled
+<Toggle label="Email notifications" defaultChecked onChange={(on) => save(on)} />
+
+// Controlled, with a loading pulse while saving
+<Toggle label="Sync" isChecked={sync} isLoading={saving} onChange={updateSync} />
+
+// Your brand color instead of Atlassian green
+<Toggle label="Dark mode" appearance="brand" size="large" />
+```
+
+| Prop                           | Default     |                                                                                      |
+| ------------------------------ | ----------- | ------------------------------------------------------------------------------------ |
+| `label`                        | (required)  | Accessible name. Render visible text next to it yourself                             |
+| `isChecked` / `defaultChecked` | `false`     | Controlled or uncontrolled state                                                     |
+| `onChange`                     |             | `(checked: boolean) => void`, fired for taps, clicks, drags, keys and screen readers |
+| `size`                         | `'regular'` | `'regular'` (32×16) or `'large'` (40×20)                                             |
+| `appearance`                   | `'success'` | `'success'` (Atlassian green) or `'brand'`                                           |
+| `isDisabled`, `isLoading`      | `false`     | Both block input; loading pulses the thumb and sets busy                             |
+| `motion`                       | `'snappy'`  | `'snappy'`, `'gentle'`, `'bouncy'`, a custom spring, or `false`                      |
+| `tokens`                       |             | Override any style token for this instance (see below)                               |
+| `name`, `value`                |             | Web forms: submits `value` (default `'on'`) when checked                             |
+
+**Customize it for your brand.** Use the theme to change every Toggle, or `tokens` to change one:
+
+```ts
+createTheme({
+  brand: '#E5484D',
+  components: {
+    Toggle: {
+      defaultProps: { appearance: 'brand', size: 'large' },
+      tokens: (theme) => ({ width: 48, height: 26, thumbSize: 20, thumbInset: 3, thumbStretch: 8 }),
+      motion: 'bouncy',
+    },
+  },
+});
+```
+
+Tokens: `width`, `height`, `thumbSize`, `thumbInset`, `thumbStretch`, `iconSize`, `trackOff`, `trackOffHovered`, `trackOn`, `trackOnHovered`, `trackDisabled`, `thumb`, `iconOn`, `iconOff`, `iconDisabled`, `focusRing`, `focusRingWidth`, `focusRingGap`.
 
 ## License
 

@@ -9,8 +9,8 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: yarn
@@ -22,3 +22,5 @@ jobs:
       - run: yarn typecheck
       - run: yarn test
       - run: yarn build
+      - name: Worklets in the native build are device-safe
+        run: yarn workspace cp-design-system check:worklets

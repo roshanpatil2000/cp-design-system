@@ -157,12 +157,7 @@ When designing component props:
 For example, a shared component might expose a consistent API:
 
 ```tsx
-<Button
-  variant="primary"
-  size="medium"
-  disabled={false}
-  onPress={handlePress}
->
+<Button variant="primary" size="medium" disabled={false} onPress={handlePress}>
   Save changes
 </Button>
 ```
@@ -396,18 +391,18 @@ Use clear, descriptive commit messages. We recommend the Conventional Commits fo
 
 Common commit types:
 
-| Type | Purpose |
-|---|---|
-| `feat` | Introduces a feature |
-| `fix` | Fixes a bug |
-| `docs` | Updates documentation |
-| `refactor` | Refactors implementation |
-| `test` | Adds or updates tests |
-| `perf` | Improves performance |
-| `style` | Changes formatting or styling without changing intended behavior |
-| `chore` | Performs maintenance |
-| `build` | Changes build configuration |
-| `ci` | Updates continuous integration |
+| Type       | Purpose                                                          |
+| ---------- | ---------------------------------------------------------------- |
+| `feat`     | Introduces a feature                                             |
+| `fix`      | Fixes a bug                                                      |
+| `docs`     | Updates documentation                                            |
+| `refactor` | Refactors implementation                                         |
+| `test`     | Adds or updates tests                                            |
+| `perf`     | Improves performance                                             |
+| `style`    | Changes formatting or styling without changing intended behavior |
+| `chore`    | Performs maintenance                                             |
+| `build`    | Changes build configuration                                      |
+| `ci`       | Updates continuous integration                                   |
 
 Examples:
 
@@ -424,14 +419,14 @@ Keep commits focused and avoid vague messages such as `updates` or `fixes`.
 
 Use descriptive branch names.
 
-| Prefix | Purpose | Example |
-|---|---|---|
-| `feature/` | New functionality | `feature/add-tooltip` |
-| `fix/` | Bug fixes | `fix/button-disabled-state` |
-| `refactor/` | Internal improvements | `refactor/theme-provider` |
-| `docs/` | Documentation | `docs/component-guidelines` |
-| `test/` | Test changes | `test/checkbox-component` |
-| `chore/` | Maintenance | `chore/update-dependencies` |
+| Prefix      | Purpose               | Example                     |
+| ----------- | --------------------- | --------------------------- |
+| `feature/`  | New functionality     | `feature/add-tooltip`       |
+| `fix/`      | Bug fixes             | `fix/button-disabled-state` |
+| `refactor/` | Internal improvements | `refactor/theme-provider`   |
+| `docs/`     | Documentation         | `docs/component-guidelines` |
+| `test/`     | Test changes          | `test/checkbox-component`   |
+| `chore/`    | Maintenance           | `chore/update-dependencies` |
 
 Create branches from the repository's designated base branch.
 
@@ -471,11 +466,13 @@ Open a pull request against the appropriate target branch.
 Include:
 
 **Description**
+
 - What changed?
 - Why is the change needed?
 - How does it improve the design system?
 
 **Testing**
+
 - What tests or checks were performed?
 - Which platforms were verified?
 - Were any checks skipped?

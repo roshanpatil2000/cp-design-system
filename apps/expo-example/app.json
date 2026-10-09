@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "name": "cp-design-system example",
+    "slug": "cp-design-system-example",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "paths": {
+      "cp-design-system": ["../../packages/cp-design-system/src/index.web.ts"]
+    }
+  },
+  "include": ["stories", ".storybook"]
+}

@@ -32,7 +32,13 @@ function Showcase() {
   const theme = useTheme();
   const heading = theme.text['heading.large'];
   return (
-    <div style={{ maxWidth: 420, fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+    <div
+      style={{
+        maxWidth: 420,
+        margin: '0 auto',
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+      }}
+    >
       <h1
         style={{
           margin: 0,

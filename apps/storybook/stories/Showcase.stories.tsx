@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button, ThemeProvider, Toggle, createTheme, useTheme } from 'cp-design-system';
+import { Button, TextField, ThemeProvider, Toggle, createTheme, useTheme } from 'cp-design-system';
 
 // Web twin of apps/expo-example/Showcase.tsx, used for the README's side-by-side screenshot.
 const violet = createTheme({ brand: '#7C3AED' });
@@ -45,8 +45,9 @@ function Showcase() {
         Settings
       </h1>
       <p style={{ margin: `0 0 ${theme.space['200']}px`, color: theme.color['color.text.subtle'] }}>
-        cp-design-system · Toggle · Button
+        cp-design-system · TextField · Toggle · Button
       </p>
+      <TextField label="Display name" defaultValue="Roshan Patil" maxCharacters={30} />
       <Row label="Wi-Fi" hint="On">
         <Toggle label="Wi-Fi" defaultChecked />
       </Row>

@@ -43,7 +43,7 @@ def load(name, top, cover=None, bottom_cut=0):
 
 
 panels = [
-    ('Web', 'React DOM · Motion', load('web-showcase.png', top=16)),
+    ('Web', 'React DOM · Motion', load('web-showcase.png', top=8)),
     ('iOS', 'React Native · Reanimated', load('ios-showcase.png', top=312, cover=(880, 100, 1206, 400), bottom_cut=200)),
     ('Android', 'React Native · Reanimated', load('android-showcase.png', top=192, cover=(840, 80, 1080, 270), bottom_cut=200)),
 ]
@@ -60,7 +60,7 @@ d = ImageDraw.Draw(canvas)
 d.text((W / 2, 52), 'One API, all platforms', font=title_f, fill=TEXT, anchor='mm')
 d.text(
     (W / 2, 102),
-    'The same <Toggle /> and <Button /> code, rendered natively on the web, iOS and Android',
+    'The same <TextField />, <Toggle /> and <Button /> code, rendered natively on the web, iOS and Android',
     font=sub_f,
     fill=SUBTLE,
     anchor='mm',

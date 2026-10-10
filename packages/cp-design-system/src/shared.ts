@@ -30,6 +30,14 @@ export type {
 } from './components/Button/Button.types';
 export type { ButtonTokens } from './components/Button/Button.tokens';
 export { getButtonTokens } from './components/Button/Button.tokens';
+export type {
+  TextFieldProps,
+  TextFieldAppearance,
+  TextFieldType,
+  TextFieldWidth,
+} from './components/TextField/TextField.types';
+export type { TextFieldTokens } from './components/TextField/TextField.tokens';
+export { getTextFieldTokens, textFieldWidths } from './components/TextField/TextField.tokens';
 export type { ToggleProps, ToggleSize, ToggleAppearance } from './components/Toggle/Toggle.types';
 export type { ToggleTokens } from './components/Toggle/Toggle.tokens';
 export { getToggleTokens } from './components/Toggle/Toggle.tokens';

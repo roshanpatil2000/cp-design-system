@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import {
   Button,
+  TextField,
   ThemeProvider,
   Toggle,
   createTheme,
@@ -58,8 +59,9 @@ export function Showcase({ onBack }: { onBack: () => void }) {
         Settings
       </Text>
       <Text style={{ color: theme.color['color.text.subtle'], marginBottom: theme.space['200'] }}>
-        cp-design-system · Toggle · Button
+        cp-design-system · TextField · Toggle · Button
       </Text>
+      <TextField label="Display name" defaultValue="Roshan Patil" maxCharacters={30} />
       <Row label="Wi-Fi" hint="On">
         <Toggle label="Wi-Fi" defaultChecked />
       </Row>

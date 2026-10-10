@@ -1,5 +1,13 @@
 import type { ButtonProps } from '../components/Button/Button.types';
 import type { ButtonTokens } from '../components/Button/Button.tokens';
+import type { CheckboxProps } from '../components/Checkbox/Checkbox.types';
+import type { CheckboxTokens } from '../components/Checkbox/Checkbox.tokens';
+import type { FlagProviderProps } from '../components/Flag/Flag.types';
+import type { FlagTokens } from '../components/Flag/Flag.tokens';
+import type { ModalProps } from '../components/Modal/Modal.types';
+import type { ModalTokens } from '../components/Modal/Modal.tokens';
+import type { RadioGroupProps, RadioProps } from '../components/Radio/Radio.types';
+import type { RadioTokens } from '../components/Radio/Radio.tokens';
 import type { TextFieldProps } from '../components/TextField/TextField.types';
 import type { TextFieldTokens } from '../components/TextField/TextField.tokens';
 import type { ToggleProps } from '../components/Toggle/Toggle.types';
@@ -73,6 +81,13 @@ export interface ComponentTheme<Props, Tokens> {
  */
 export interface ComponentThemes {
   Button?: ComponentTheme<ButtonProps, ButtonTokens>;
+  Checkbox?: ComponentTheme<CheckboxProps, CheckboxTokens>;
+  /** Flag tokens apply to every appearance; use a function of the theme to vary them. */
+  Flag?: ComponentTheme<FlagProviderProps, FlagTokens>;
+  Modal?: ComponentTheme<ModalProps, ModalTokens>;
+  Radio?: ComponentTheme<RadioProps, RadioTokens>;
+  /** Only `defaultProps` apply; style radios through `Radio`. */
+  RadioGroup?: Pick<ComponentTheme<RadioGroupProps, never>, 'defaultProps'>;
   TextField?: ComponentTheme<TextFieldProps, TextFieldTokens>;
   Toggle?: ComponentTheme<ToggleProps, ToggleTokens>;
 }

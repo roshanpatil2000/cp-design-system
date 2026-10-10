@@ -1,4 +1,4 @@
-import { cancelAnimation, interpolateColor, withSpring } from 'react-native-reanimated';
+import { cancelAnimation, interpolateColor, withSpring, withTiming } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
 /*
@@ -14,6 +14,7 @@ import { scheduleOnRN } from 'react-native-worklets';
  * `yarn check:worklets` verifies this against the built bundle.
  */
 export const springTo = withSpring;
+export const timeTo = withTiming;
 export const stopAnimation = cancelAnimation;
 export const mixColors = interpolateColor;
 /** Schedules a JS-thread callback from a worklet. */

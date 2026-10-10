@@ -2,8 +2,6 @@ import { useEffect } from 'react';
 import { Platform, Text, TextInput, View, type KeyboardTypeOptions } from 'react-native';
 import Animated, {
   Easing,
-  Keyframe,
-  LinearTransition,
   useAnimatedStyle,
   useSharedValue,
   withSequence,
@@ -11,7 +9,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { fontWeightFor } from '../../theme/createTheme';
 import { mixColors } from '../../motion/worklet.native';
-import type { MessageKind } from './useTextField';
+import { FieldMessage, fieldSettle } from '../internal/FieldMessage.native';
+import { StatusIcon } from '../internal/StatusIcon.native';
 import type { TextFieldProps, TextFieldType } from './TextField.types';
 import { useTextField } from './useTextField';
 
@@ -24,66 +23,6 @@ const keyboards: Record<TextFieldType, KeyboardTypeOptions> = {
   url: 'url',
   search: 'web-search',
 };
-
-// Atlassian's form message motion: in = 150ms slide up 2px + fade; out = 100ms reverse.
-const messageIn = new Keyframe({
-  0: { opacity: 0, transform: [{ translateY: 2 }] },
-  100: { opacity: 1, transform: [{ translateY: 0 }], easing: Easing.bezier(0.4, 1, 0.6, 1) },
-}).duration(150);
-const messageOut = new Keyframe({
-  0: { opacity: 1, transform: [{ translateY: 0 }] },
-  100: { opacity: 0, transform: [{ translateY: 2 }], easing: Easing.bezier(0.6, 0, 0.8, 0.6) },
-}).duration(100);
-const settle = LinearTransition.duration(150);
-
-/** 12px status icon drawn with plain views so it matches the web version exactly. */
-function MessageIcon({ kind, color, glyph }: { kind: MessageKind; color: string; glyph: string }) {
-  if (kind === 'helper') return null;
-  return (
-    <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: color }}>
-      {kind === 'error' ? (
-        <>
-          <View
-            style={{
-              position: 'absolute',
-              left: 5,
-              top: 2.5,
-              width: 2,
-              height: 4.5,
-              borderRadius: 1,
-              backgroundColor: glyph,
-            }}
-          />
-          <View
-            style={{
-              position: 'absolute',
-              left: 5,
-              top: 8,
-              width: 2,
-              height: 2,
-              borderRadius: 1,
-              backgroundColor: glyph,
-            }}
-          />
-        </>
-      ) : (
-        <View
-          style={{
-            position: 'absolute',
-            left: 4,
-            top: 2,
-            width: 3.5,
-            height: 6,
-            borderColor: glyph,
-            borderRightWidth: 1.75,
-            borderBottomWidth: 1.75,
-            transform: [{ rotate: '45deg' }],
-          }}
-        />
-      )}
-    </View>
-  );
-}
 
 export function TextField(input: TextFieldProps) {
   const f = useTextField(input, true);
@@ -132,8 +71,6 @@ export function TextField(input: TextFieldProps) {
   const fontFamily = props.isMonospaced
     ? (t.monoFontFamily ?? Platform.select({ ios: 'Menlo', default: 'monospace' }))
     : t.fontFamily;
-  const messageColor = (kind: MessageKind) =>
-    kind === 'error' ? t.errorColor : kind === 'valid' ? t.validColor : t.helperColor;
   const glyph = theme.color['color.icon.inverse'];
   const messageText = {
     fontSize: t.messageFontSize,
@@ -244,29 +181,21 @@ export function TextField(input: TextFieldProps) {
           <View style={{ paddingRight: t.paddingX }}>{props.elemAfterInput}</View>
         ) : null}
       </Animated.View>
-      {f.message ? (
-        <Animated.View
-          key={`${f.message.kind}:${f.message.text}`}
-          entering={reduceMotion ? undefined : messageIn}
-          exiting={reduceMotion ? undefined : messageOut}
-          layout={reduceMotion ? undefined : settle}
-          testID={props.testID && `${props.testID}-message-${f.message.kind}`}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: theme.space['075'],
-            marginTop: theme.space['050'],
-          }}
-        >
-          <MessageIcon kind={f.message.kind} color={messageColor(f.message.kind)} glyph={glyph} />
-          <Text style={{ ...messageText, color: messageColor(f.message.kind), flexShrink: 1 }}>
-            {f.message.text}
-          </Text>
-        </Animated.View>
-      ) : null}
+      <FieldMessage
+        message={f.message}
+        testID={props.testID}
+        style={{
+          helperColor: t.helperColor,
+          errorColor: t.errorColor,
+          validColor: t.validColor,
+          fontSize: t.messageFontSize,
+          lineHeight: t.messageLineHeight,
+          fontFamily: t.fontFamily,
+        }}
+      />
       {f.counter ? (
         <Animated.View
-          layout={reduceMotion ? undefined : settle}
+          layout={reduceMotion ? undefined : fieldSettle}
           testID={props.testID && `${props.testID}-counter`}
           style={{
             flexDirection: 'row',
@@ -276,7 +205,7 @@ export function TextField(input: TextFieldProps) {
           }}
         >
           {f.counter.isError ? (
-            <MessageIcon kind="error" color={t.errorColor} glyph={glyph} />
+            <StatusIcon kind="error" size={12} color={t.errorColor} glyph={glyph} />
           ) : null}
           <Text style={{ ...messageText, color: f.counter.isError ? t.errorColor : t.helperColor }}>
             {f.counter.text}

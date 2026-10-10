@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.3.0 (2026-10-10)
+
+### Added
+
+- **TextField.** Atlassian's text field with label, helper, error and valid messages, a character counter, password and monospaced modes, and animated focus and messages.
+- **Checkbox.** An animated fill and tick, a press pop, the indeterminate (mixed) state, and invalid and required styles. Uses a real checkbox input on web.
+- **RadioGroup and Radio.** A spring-in dot. Uses native radio inputs on web, so arrow keys and form submission work.
+- **FlagProvider and `useFlags()`.** Atlassian's flags (toasts):
+  - five appearances and optional action links
+  - auto-dismiss after 8 seconds, with a countdown bar that pauses on hover, focus or touch
+  - swipe to dismiss, and replace by id
+  - `maxFlags` caps how many show at once
+- **Modal.**
+  - Atlassian's widths and enter/exit motion, with warning and danger icons.
+  - Web: focus trap, Escape and blanket close, scroll lock and focus restore.
+  - Native: an RN `Modal` that closes on Android back.
+
+### Changed
+
+- `react-dom` is now an optional peer dependency, needed on web for flags and modals.
+
 ## 0.2.0 (2026-10-09)
 
 A rebuild on Atlassian's design language, with motion and brand theming. **Breaking:** the 0.1.x components and theme API are removed.

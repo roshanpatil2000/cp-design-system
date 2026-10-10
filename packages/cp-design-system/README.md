@@ -138,11 +138,10 @@ import { atlassianLightColors, atlassianSpace, atlassianEasings } from 'cp-desig
 
 Each component is built and tested on both platforms before release.
 
-| Status        | Component                                                                                                                         |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| Ready (0.2.0) | [Button](#button), [Toggle](#toggle)                                                                                              |
-| Next release  | [Text field](#text-field), [Checkbox](#checkbox), [Radio group](#radio-group), [Flag](#flag-toast), [Modal dialog](#modal-dialog) |
-| Planned       | Select, Spinner, Lozenge, Badge, Tooltip, Tabs, Avatar and more                                                                   |
+| Status        | Component                                                                                                                                                               |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ready (0.3.0) | [Button](#button), [Toggle](#toggle), [Text field](#text-field), [Checkbox](#checkbox), [Radio group](#radio-group), [Flag](#flag-toast), [Modal dialog](#modal-dialog) |
+| Planned       | Select, Spinner, Lozenge, Badge, Tooltip, Tabs, Avatar and more                                                                                                         |
 
 ### Text field
 

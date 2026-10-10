@@ -14,6 +14,10 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import {
   Button,
+  Checkbox,
+  FlagProvider,
+  Modal,
+  RadioGroup,
   TextField,
   ThemeProvider,
   Toggle,
@@ -23,7 +27,9 @@ import {
   resolveSpring,
   useHaptics,
   useReducedMotion,
+  useFlags,
   useTheme,
+  type FlagAppearance,
   type HapticsAdapter,
   type SpringName,
   type ThemeColor,
@@ -138,6 +144,119 @@ function AsyncSaveButton() {
       <Text style={{ color: theme.color['color.text.subtle'], fontSize: 12 }}>
         {`Saved ${count} time(s)`}
       </Text>
+    </View>
+  );
+}
+
+/** Select-all checkbox that shows the mixed state while only some items are chosen. */
+function ChecklistDemo() {
+  const items = ['Email', 'Push', 'SMS'];
+  const [chosen, setChosen] = useState<string[]>(['Email']);
+  const all = chosen.length === items.length;
+  return (
+    <View>
+      <Checkbox
+        label="All notifications"
+        testID="select-all"
+        isChecked={all}
+        isIndeterminate={chosen.length > 0 && !all}
+        onChange={(on) => setChosen(on ? items : [])}
+      />
+      <View style={{ paddingLeft: 24 }}>
+        {items.map((item) => (
+          <Checkbox
+            key={item}
+            label={item}
+            isChecked={chosen.includes(item)}
+            onChange={(on) => setChosen((c) => (on ? [...c, item] : c.filter((x) => x !== item)))}
+          />
+        ))}
+      </View>
+    </View>
+  );
+}
+
+const flagDemos: { appearance: FlagAppearance; title: string; description: string }[] = [
+  { appearance: 'normal', title: 'Connected', description: 'Your Slack workspace is linked.' },
+  { appearance: 'success', title: 'Changes saved', description: 'Everyone can see them now.' },
+  { appearance: 'info', title: 'New version', description: 'Reload to get the latest.' },
+  { appearance: 'warning', title: 'Storage almost full', description: '90% of 5 GB used.' },
+  { appearance: 'error', title: 'Upload failed', description: 'Check your connection.' },
+];
+
+function FlagDemo() {
+  const { showFlag } = useFlags();
+  const theme = useTheme();
+  return (
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.space['100'] }}>
+      {flagDemos.map((f) => (
+        <Button
+          key={f.appearance}
+          spacing="compact"
+          testID={`flag-${f.appearance}`}
+          onPress={() =>
+            showFlag({
+              ...f,
+              actions: f.appearance === 'error' ? [{ content: 'Retry', onPress: () => {} }] : [],
+            })
+          }
+        >
+          {f.appearance}
+        </Button>
+      ))}
+    </View>
+  );
+}
+
+function ModalDemo() {
+  const [open, setOpen] = useState<null | 'default' | 'danger'>(null);
+  const { showFlag } = useFlags();
+  const theme = useTheme();
+  const close = () => setOpen(null);
+  return (
+    <View style={{ flexDirection: 'row', gap: theme.space['100'] }}>
+      <Button testID="open-modal" onPress={() => setOpen('default')}>
+        Open modal
+      </Button>
+      <Button appearance="danger" onPress={() => setOpen('danger')}>
+        Delete…
+      </Button>
+      <Modal
+        isOpen={open !== null}
+        onClose={close}
+        testID="modal"
+        appearance={open === 'danger' ? 'danger' : undefined}
+        width={open === 'danger' ? 'small' : 'medium'}
+        title={open === 'danger' ? 'Delete this project?' : 'Invite teammates'}
+        footer={
+          <>
+            <Button appearance="subtle" onPress={close}>
+              Cancel
+            </Button>
+            <Button
+              appearance={open === 'danger' ? 'danger' : 'primary'}
+              onPress={() => {
+                close();
+                showFlag({
+                  appearance: 'success',
+                  title: open === 'danger' ? 'Project deleted' : 'Invites sent',
+                });
+              }}
+            >
+              {open === 'danger' ? 'Delete' : 'Send invites'}
+            </Button>
+          </>
+        }
+      >
+        {open === 'danger' ? (
+          'The project and its 24 issues will be removed for everyone. This can’t be undone.'
+        ) : (
+          <View style={{ gap: theme.space['150'] }}>
+            <TextField label="Email addresses" placeholder="name@company.com" />
+            <Checkbox label="Send a welcome email" defaultChecked />
+          </View>
+        )}
+      </Modal>
     </View>
   );
 }
@@ -328,6 +447,38 @@ function Foundations({
         <AsyncSaveButton />
       </View>
 
+      <View style={{ gap: theme.space['100'] }}>
+        <Heading>Checkbox</Heading>
+        <ChecklistDemo />
+        <Checkbox label="I agree to the terms" isRequired isInvalid />
+        <Checkbox label="Disabled" isDisabled defaultChecked />
+      </View>
+
+      <View style={{ gap: theme.space['100'] }}>
+        <Heading>Radio group</Heading>
+        <RadioGroup
+          label="Plan"
+          testID="plan"
+          defaultValue="standard"
+          options={[
+            { value: 'free', label: 'Free' },
+            { value: 'standard', label: 'Standard' },
+            { value: 'premium', label: 'Premium' },
+            { value: 'enterprise', label: 'Enterprise (contact sales)', isDisabled: true },
+          ]}
+        />
+      </View>
+
+      <View style={{ gap: theme.space['150'] }}>
+        <Heading>Flag (swipe to dismiss)</Heading>
+        <FlagDemo />
+      </View>
+
+      <View style={{ gap: theme.space['150'] }}>
+        <Heading>Modal dialog</Heading>
+        <ModalDemo />
+      </View>
+
       <View style={{ gap: theme.space['150'] }}>
         <Heading>Toggle</Heading>
         <SettingRow label="Regular · success">
@@ -411,29 +562,31 @@ export default function App() {
         motion={reduced ? 'reduced' : 'system'}
         haptics={haptics}
       >
-        <StatusBar style={dark ? 'light' : 'dark'} />
-        <SafeAreaView
-          style={{
-            flex: 1,
-            backgroundColor: surface,
-            // SafeAreaView only pads on iOS; leave room for the Android status bar too.
-            paddingTop: Platform.OS === 'android' ? RNStatusBar.currentHeight : 0,
-          }}
-        >
-          {showcase ? (
-            <Showcase onBack={() => setShowcase(false)} />
-          ) : (
-            <Foundations
-              brand={brand}
-              setBrand={setBrand}
-              dark={dark}
-              setDark={setDark}
-              reduced={reduced}
-              setReduced={setReduced}
-              openShowcase={() => setShowcase(true)}
-            />
-          )}
-        </SafeAreaView>
+        <FlagProvider>
+          <StatusBar style={dark ? 'light' : 'dark'} />
+          <SafeAreaView
+            style={{
+              flex: 1,
+              backgroundColor: surface,
+              // SafeAreaView only pads on iOS; leave room for the Android status bar too.
+              paddingTop: Platform.OS === 'android' ? RNStatusBar.currentHeight : 0,
+            }}
+          >
+            {showcase ? (
+              <Showcase onBack={() => setShowcase(false)} />
+            ) : (
+              <Foundations
+                brand={brand}
+                setBrand={setBrand}
+                dark={dark}
+                setDark={setDark}
+                reduced={reduced}
+                setReduced={setReduced}
+                openShowcase={() => setShowcase(true)}
+              />
+            )}
+          </SafeAreaView>
+        </FlagProvider>
       </ThemeProvider>
     </GestureHandlerRootView>
   );

@@ -138,11 +138,11 @@ import { atlassianLightColors, atlassianSpace, atlassianEasings } from 'cp-desig
 
 Each component is built and tested on both platforms before release.
 
-| Status        | Component                                                                                             |
-| ------------- | ----------------------------------------------------------------------------------------------------- |
-| Ready (0.2.0) | [Button](#button), [Toggle](#toggle)                                                                  |
-| Next release  | [Text field](#text-field)                                                                             |
-| Planned       | Checkbox, Radio, Select, Spinner, Lozenge, Badge, Flag (toast), Modal, Tooltip, Tabs, Avatar and more |
+| Status        | Component                                                                                                                         |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Ready (0.2.0) | [Button](#button), [Toggle](#toggle)                                                                                              |
+| Next release  | [Text field](#text-field), [Checkbox](#checkbox), [Radio group](#radio-group), [Flag](#flag-toast), [Modal dialog](#modal-dialog) |
+| Planned       | Select, Spinner, Lozenge, Badge, Tooltip, Tabs, Avatar and more                                                                   |
 
 ### Text field
 
@@ -293,6 +293,148 @@ createTheme({
 ```
 
 Tokens: `width`, `height`, `thumbSize`, `thumbInset`, `thumbStretch`, `iconSize`, `trackOff`, `trackOffHovered`, `trackOn`, `trackOnHovered`, `trackDisabled`, `thumb`, `iconOn`, `iconOff`, `iconDisabled`, `focusRing`, `focusRingWidth`, `focusRingGap`.
+
+### Checkbox
+
+Atlassian's 14px checkbox in a 24px hit area. The box fills over 150ms and pops while pressed, and the tick springs in. It supports a mixed (indeterminate) state.
+
+```tsx
+import { Checkbox } from 'cp-design-system';
+
+<Checkbox label="Remember me" defaultChecked onChange={(on) => setRemember(on)} />
+
+// "Select all" with a mixed state
+<Checkbox label="All" isChecked={all} isIndeterminate={some && !all} onChange={selectAll} />
+
+<Checkbox label="I agree to the terms" isRequired isInvalid={!agreed} />
+```
+
+| Prop                                    | Default    |                                                          |
+| --------------------------------------- | ---------- | -------------------------------------------------------- |
+| `label`                                 | (required) | Visible label and accessible name                        |
+| `isChecked` / `defaultChecked`          | `false`    | Controlled or uncontrolled state                         |
+| `isIndeterminate`                       | `false`    | Shows a dash and reports `mixed`. Pressing it selects    |
+| `onChange`                              |            | `(checked: boolean) => void`                             |
+| `isDisabled`, `isInvalid`, `isRequired` | `false`    | Invalid shows a red border; required adds a red `*`      |
+| `name`, `value`                         |            | Web forms: submits `value` (default `'on'`) when checked |
+| `tokens`, `motion`                      |            | Per-instance overrides, as for every component           |
+
+Tokens: `size`, `radius`, `borderWidth`, `hitSize`, `gap`, `pressedScale`, `background`, `backgroundHovered`, `backgroundPressed`, `border`, `borderInvalid`, `checked`, `checkedHovered`, `checkedPressed`, `mark`, `disabledBackground`, `disabledMark`, `label`, `labelDisabled`, `required`, `fontSize`, `lineHeight`, `fontFamily`, `focusRing`, `focusRingWidth`. Theme key: `components.Checkbox`.
+
+### Radio group
+
+A group of radios whose dot springs in when selected. On web it uses native radio inputs, so arrow keys move the selection and the value is submitted with forms. Use `Radio` on its own for custom layouts.
+
+```tsx
+import { RadioGroup } from 'cp-design-system';
+
+<RadioGroup
+  label="Plan"
+  defaultValue="standard"
+  onChange={(plan) => setPlan(plan)}
+  options={[
+    { value: 'free', label: 'Free' },
+    { value: 'standard', label: 'Standard' },
+    { value: 'enterprise', label: 'Enterprise', isDisabled: true },
+  ]}
+/>;
+```
+
+| Prop                                    | Default      |                                      |
+| --------------------------------------- | ------------ | ------------------------------------ |
+| `options`                               | (required)   | `{ value, label, isDisabled? }[]`    |
+| `value` / `defaultValue`                |              | Controlled or uncontrolled selection |
+| `onChange`                              |              | `(value: string) => void`            |
+| `label`                                 |              | Accessible name of the group         |
+| `direction`                             | `'vertical'` | `'vertical'` or `'horizontal'`       |
+| `isDisabled`, `isInvalid`, `isRequired` | `false`      |                                      |
+| `name`                                  | generated    | Web form field name                  |
+
+Radio uses the Checkbox tokens plus `dotSize`. Theme keys: `components.Radio` (tokens) and `components.RadioGroup` (default props).
+
+### Flag (toast)
+
+Atlassian's flags: they stack in the bottom-left corner on web and at the bottom of the screen on native.
+
+- **Motion:** flags slide in and out with Atlassian's flag timings, and the stack moves smoothly when one leaves.
+- **Auto-dismiss:** after 8 seconds, shown by a countdown bar. The countdown pauses while the flag is hovered, focused or touched.
+- **Swipe to dismiss:** swipe sideways. On native this runs on the UI thread.
+- **Accessibility:** errors and warnings are announced as alerts.
+
+```tsx
+import { FlagProvider, useFlags } from 'cp-design-system';
+
+// Once, near the root (inside ThemeProvider)
+<FlagProvider>
+  <App />
+</FlagProvider>;
+
+// Anywhere below it
+const { showFlag, dismissFlag } = useFlags();
+showFlag({
+  appearance: 'error',
+  title: 'Upload failed',
+  description: 'Check your connection.',
+  actions: [{ content: 'Retry', onPress: retry }],
+});
+```
+
+| `showFlag` option | Default       |                                                             |
+| ----------------- | ------------- | ----------------------------------------------------------- |
+| `title`           | (required)    |                                                             |
+| `description`     |               |                                                             |
+| `appearance`      | `'normal'`    | `'normal'`, `'info'`, `'success'`, `'warning'` or `'error'` |
+| `icon`            | by appearance | `'info'`, `'success'`, `'warning'`, `'error'` or `false`    |
+| `actions`         |               | `{ content, onPress }[]`                                    |
+| `isAutoDismiss`   | `true`        |                                                             |
+| `id`              | generated     | Reuse an id to replace a visible flag                       |
+| `onDismissed`     |               | Called once the flag is gone                                |
+
+`FlagProvider` props: `autoDismissDuration` (default `8000`), `maxFlags` (default `5`), `label`, `tokens` and `motion`. The `useFlags()` hook also returns `dismissAllFlags`. Theme key: `components.Flag`.
+
+### Modal dialog
+
+Atlassian's modal: a blanket with a dialog that fades and slides in using Atlassian's modal timings. It has a header, a scrolling body and a right-aligned footer.
+
+- **Web:** the dialog renders in a portal. It traps focus, closes on Escape or a blanket click, locks page scrolling and returns focus when it closes. Below 30rem it fills the screen.
+- **Native:** the dialog uses a transparent RN `Modal`, and Android back closes it. On narrow screens a small dialog stays a centered card, and wider ones fill the screen.
+
+```tsx
+import { Button, Modal } from 'cp-design-system';
+
+<Modal
+  isOpen={open}
+  onClose={() => setOpen(false)}
+  title="Delete this project?"
+  appearance="danger"
+  width="small"
+  footer={
+    <>
+      <Button appearance="subtle" onPress={() => setOpen(false)}>
+        Cancel
+      </Button>
+      <Button appearance="danger" onPress={remove}>
+        Delete
+      </Button>
+    </>
+  }
+>
+  The project and its issues will be removed for everyone.
+</Modal>;
+```
+
+| Prop                         | Default    |                                                                            |
+| ---------------------------- | ---------- | -------------------------------------------------------------------------- |
+| `isOpen`, `onClose`, `title` | (required) |                                                                            |
+| `footer`                     |            | Usually Buttons                                                            |
+| `width`                      | `'medium'` | `'small'` 400, `'medium'` 600, `'large'` 800, `'x-large'` 968, or a number |
+| `appearance`                 |            | `'warning'` or `'danger'` adds an icon before the title                    |
+| `shouldCloseOnBlanketClick`  | `true`     |                                                                            |
+| `shouldCloseOnEscapePress`   | `true`     | Web only                                                                   |
+| `onCloseComplete`            |            | Called after the exit animation                                            |
+| `tokens`, `motion`           |            | `motion={false}` turns the animation off                                   |
+
+Theme key: `components.Modal`.
 
 ## License
 

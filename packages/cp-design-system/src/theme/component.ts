@@ -29,3 +29,7 @@ export function resolveSpring(
   if (chosen === false) return null;
   return typeof chosen === 'string' ? theme.motion.springs[chosen] : chosen;
 }
+
+/** Drops undefined props so they don't override `theme.components.X.defaultProps`. */
+export const withoutUndefined = <T extends object>(obj: T): Partial<T> =>
+  Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined)) as Partial<T>;

@@ -1,7 +1,8 @@
 import { useEffect, useId, useState, type CSSProperties } from 'react';
-import { AnimatePresence, motion, useAnimate } from 'motion/react';
+import { useAnimate } from 'motion/react';
 import { useMediaQuery } from '../../theme/useMediaQuery.web';
-import type { MessageKind } from './useTextField';
+import { FieldMessage } from '../internal/FieldMessage.web';
+import { StatusIcon } from '../internal/StatusIcon.web';
 import type { TextFieldProps, TextFieldType } from './TextField.types';
 import { useTextField } from './useTextField';
 
@@ -23,66 +24,6 @@ const visuallyHidden: CSSProperties = {
   clip: 'rect(0 0 0 0)',
   whiteSpace: 'nowrap',
 };
-
-/** 12px status icon drawn with plain shapes so it matches the native version exactly. */
-function MessageIcon({ kind, color, glyph }: { kind: MessageKind; color: string; glyph: string }) {
-  if (kind === 'helper') return null;
-  return (
-    <span
-      aria-hidden
-      style={{
-        position: 'relative',
-        flexShrink: 0,
-        width: 12,
-        height: 12,
-        borderRadius: 6,
-        background: color,
-      }}
-    >
-      {kind === 'error' ? (
-        <>
-          <span
-            style={{
-              position: 'absolute',
-              left: 5,
-              top: 2.5,
-              width: 2,
-              height: 4.5,
-              borderRadius: 1,
-              background: glyph,
-            }}
-          />
-          <span
-            style={{
-              position: 'absolute',
-              left: 5,
-              top: 8,
-              width: 2,
-              height: 2,
-              borderRadius: 1,
-              background: glyph,
-            }}
-          />
-        </>
-      ) : (
-        <span
-          style={{
-            position: 'absolute',
-            left: 4,
-            top: 2,
-            width: 3.5,
-            height: 6,
-            borderStyle: 'solid',
-            borderColor: glyph,
-            borderWidth: '0 1.75px 1.75px 0',
-            transform: 'rotate(45deg)',
-            boxSizing: 'border-box',
-          }}
-        />
-      )}
-    </span>
-  );
-}
 
 /** Announces text to screen readers once typing settles (Atlassian debounces its counter too). */
 function useDebounced(value: string | undefined, ms: number) {
@@ -144,20 +85,6 @@ export function TextField(input: TextFieldProps) {
   const fontFamily = props.isMonospaced
     ? (t.monoFontFamily ?? 'monospace')
     : (t.fontFamily ?? 'inherit');
-  const messageColor = (kind: MessageKind) =>
-    kind === 'error' ? t.errorColor : kind === 'valid' ? t.validColor : t.helperColor;
-  const enter = reduceMotion
-    ? { duration: 0 }
-    : {
-        duration: 0.15,
-        ease: [...theme.motion.easings['out.practical']] as [number, number, number, number],
-      };
-  const exit = reduceMotion
-    ? { duration: 0 }
-    : {
-        duration: 0.1,
-        ease: [...theme.motion.easings['in.practical']] as [number, number, number, number],
-      };
   const messageStyle: CSSProperties = {
     display: 'flex',
     alignItems: 'center',
@@ -284,28 +211,18 @@ export function TextField(input: TextFieldProps) {
           </span>
         )}
       </div>
-      <AnimatePresence initial={false}>
-        {f.message && (
-          <motion.div
-            key={`${f.message.kind}:${f.message.text}`}
-            id={messageId}
-            data-part={`message-${f.message.kind}`}
-            initial={{ opacity: 0, y: 2, height: 0 }}
-            animate={{ opacity: 1, y: 0, height: 'auto', transition: enter }}
-            exit={{ opacity: 0, y: 2, height: 0, transition: exit }}
-            style={{ overflow: 'hidden' }}
-          >
-            <div style={{ ...messageStyle, color: messageColor(f.message.kind) }}>
-              <MessageIcon
-                kind={f.message.kind}
-                color={messageColor(f.message.kind)}
-                glyph={theme.color['color.icon.inverse']}
-              />
-              <span>{f.message.text}</span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <FieldMessage
+        message={f.message}
+        id={messageId}
+        style={{
+          helperColor: t.helperColor,
+          errorColor: t.errorColor,
+          validColor: t.validColor,
+          fontSize: t.messageFontSize,
+          lineHeight: t.messageLineHeight,
+          fontFamily: t.fontFamily,
+        }}
+      />
       {f.counter && (
         <div
           id={counterId}
@@ -314,8 +231,9 @@ export function TextField(input: TextFieldProps) {
           style={{ ...messageStyle, color: f.counter.isError ? t.errorColor : t.helperColor }}
         >
           {f.counter.isError && (
-            <MessageIcon
+            <StatusIcon
               kind="error"
+              size={12}
               color={t.errorColor}
               glyph={theme.color['color.icon.inverse']}
             />

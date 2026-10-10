@@ -1,6 +1,6 @@
 {
   "name": "cp-design-system",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Cross-platform design system for React (web) and React Native, sharing one set of tokens and component APIs.",
   "license": "MIT",
   "author": "roshanpatil2000",

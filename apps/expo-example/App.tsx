@@ -14,6 +14,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import {
   Button,
+  TextField,
   ThemeProvider,
   Toggle,
   atlassianTheme,
@@ -86,6 +87,32 @@ function SettingRow({ label, children }: { label: string; children: React.ReactN
 }
 
 /** Controlled toggle that "saves" for a moment, showing the loading pulse. */
+/** Email field that validates on submit: shakes and shows an animated error. */
+function EmailField() {
+  const [email, setEmail] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const invalid = submitted && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  return (
+    <TextField
+      testID="email"
+      label="Work email"
+      isRequired
+      type="email"
+      placeholder="you@company.com"
+      value={email}
+      onChange={(v) => {
+        setEmail(v);
+        setSubmitted(false);
+      }}
+      onSubmit={() => setSubmitted(true)}
+      helperMessage="Press return to validate"
+      isInvalid={invalid}
+      errorMessage={email ? 'That doesn’t look like an email address' : 'Email is required'}
+      validMessage={submitted && !invalid ? 'Looks good' : undefined}
+    />
+  );
+}
+
 /** Full-width primary button that "saves" for a moment, showing the loading crossfade. */
 function AsyncSaveButton() {
   const [saving, setSaving] = useState(false);
@@ -271,6 +298,14 @@ function Foundations({
             testID="reduce-motion"
           />
         </SettingRow>
+      </View>
+
+      <View style={{ gap: theme.space['150'] }}>
+        <Heading>Text field</Heading>
+        <EmailField />
+        <TextField label="Password" type="password" placeholder="At least 8 characters" />
+        <TextField label="Bio" maxCharacters={40} defaultValue="Building a design system" />
+        <TextField label="Disabled" isDisabled defaultValue="Can't edit me" isCompact />
       </View>
 
       <View style={{ gap: theme.space['150'] }}>

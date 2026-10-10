@@ -11,13 +11,14 @@ An animated, brand-themable design system for **React (web)** and **React Native
 
 ## One API, all platforms
 
-![The same settings screen, with Toggles and Buttons, rendered on the web, iOS and Android](https://raw.githubusercontent.com/roshanpatil2000/cp-design-system/main/docs/images/one-api-all-platforms.png)
+![The same settings screen, with a text field, toggles and buttons, rendered on the web, iOS and Android](https://raw.githubusercontent.com/roshanpatil2000/cp-design-system/main/docs/images/one-api-all-platforms.png)
 
 You write it once:
 
 ```tsx
-import { Button, Toggle } from 'cp-design-system';
+import { Button, TextField, Toggle } from 'cp-design-system';
 
+<TextField label="Display name" defaultValue="Roshan Patil" maxCharacters={30} />
 <Toggle label="Wi-Fi" defaultChecked />
 <Toggle label="Dark mode" size="large" appearance="brand" />
 <Button appearance="primary" onPress={save}>Save</Button>
@@ -137,10 +138,57 @@ import { atlassianLightColors, atlassianSpace, atlassianEasings } from 'cp-desig
 
 Each component is built and tested on both platforms before release.
 
-| Status  | Component                                                                                                         |
-| ------- | ----------------------------------------------------------------------------------------------------------------- |
-| Ready   | [Button](#button), [Toggle](#toggle)                                                                              |
-| Planned | Text field, Checkbox, Radio, Select, Spinner, Lozenge, Badge, Flag (toast), Modal, Tooltip, Tabs, Avatar and more |
+| Status        | Component                                                                                             |
+| ------------- | ----------------------------------------------------------------------------------------------------- |
+| Ready (0.2.0) | [Button](#button), [Toggle](#toggle)                                                                  |
+| Next release  | [Text field](#text-field)                                                                             |
+| Planned       | Checkbox, Radio, Select, Spinner, Lozenge, Badge, Flag (toast), Modal, Tooltip, Tabs, Avatar and more |
+
+### Text field
+
+Atlassian's text field (40px, or 32px with `isCompact`) with its form pieces built in: label, required asterisk, helper, error and valid messages, and a character counter.
+
+- **Focus and states:** a 2px focus edge and a 2px danger edge when invalid. Border, background and ring fade over Atlassian's 150ms input timing, and the 2px edge never shifts the layout.
+- **Messages:** they slide 2px and fade in, then fade out, with the space collapsing smoothly (Atlassian's form message motion). An error replaces the helper; a valid message shows when the field isn't invalid.
+- **Shake:** the field shakes when it becomes invalid or when the error message changes. Reduced motion turns this off.
+- **Character counter:** shows "N characters remaining", then "N characters too many" as an error. Typing past the limit is allowed, as in Atlassian. "N more characters needed" only becomes an error after the user leaves the field. Screen readers hear the count once typing settles.
+- **Phones:** 16px text on touch phones so iOS doesn't zoom, at the same 40px height. `type` picks the right keyboard (email, number, phone, URL, search, password). On native, an uncontrolled field owns its text, so fast input is never overwritten.
+
+```tsx
+import { TextField } from 'cp-design-system';
+
+<TextField label="Display name" defaultValue="Roshan" maxCharacters={30} />
+
+<TextField
+  label="Work email"
+  type="email"
+  isRequired
+  value={email}
+  onChange={setEmail}
+  onSubmit={validate}
+  helperMessage="We'll never share it"
+  isInvalid={!!error}
+  errorMessage={error}
+/>
+```
+
+| Prop                                                                  | Default      |                                                                                             |
+| --------------------------------------------------------------------- | ------------ | ------------------------------------------------------------------------------------------- |
+| `label` / `accessibilityLabel`                                        |              | Visible label, or an accessible name when there is none                                     |
+| `value` / `defaultValue`                                              |              | Controlled or uncontrolled text                                                             |
+| `onChange`                                                            |              | `(text: string) => void` on every change                                                    |
+| `onSubmit`, `onFocus`, `onBlur`                                       |              | Enter on the web, the return key on native                                                  |
+| `type`                                                                | `'text'`     | `'text'`, `'email'`, `'password'`, `'number'`, `'tel'`, `'url'` or `'search'`               |
+| `appearance`                                                          | `'standard'` | `'standard'`, `'subtle'` (border on hover and focus) or `'none'`                            |
+| `isCompact`, `isDisabled`, `isReadOnly`, `isRequired`, `isMonospaced` | `false`      |                                                                                             |
+| `isInvalid` + `errorMessage`, `helperMessage`, `validMessage`         |              | Messages below the field                                                                    |
+| `maxCharacters`, `minCharacters`                                      |              | Character counter                                                                           |
+| `elemBeforeInput`, `elemAfterInput`                                   |              | Content inside the field, e.g. a search icon or a clear button                              |
+| `width`                                                               | full width   | `'xsmall'` (80), `'small'` (160), `'medium'` (240), `'large'` (320), `'xlarge'` (480) or px |
+| `name`, `autoComplete`, `autoFocus`, `placeholder`                    |              | `name` is web only                                                                          |
+| `tokens`, `motion`                                                    |              | Style tokens, and the shake (`false` turns it off)                                          |
+
+Tokens: `height`, `paddingX`, `radius`, `borderWidth`, `fontSize`, `lineHeight`, `fontFamily`, `monoFontFamily`, `background`, `backgroundHovered`, `backgroundFocused`, `backgroundDisabled`, `border`, `borderHovered`, `borderFocused`, `borderInvalid`, `borderDisabled`, `text`, `textDisabled`, `placeholder`, `placeholderDisabled`, `labelColor`, `labelFontSize`, `labelLineHeight`, `labelFontWeight`, `requiredColor`, `messageFontSize`, `messageLineHeight`, `helperColor`, `errorColor`, `validColor`, `shakeDistance`.
 
 ### Button
 

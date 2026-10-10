@@ -1,5 +1,7 @@
 import type { ButtonProps } from '../components/Button/Button.types';
 import type { ButtonTokens } from '../components/Button/Button.tokens';
+import type { TextFieldProps } from '../components/TextField/TextField.types';
+import type { TextFieldTokens } from '../components/TextField/TextField.tokens';
 import type { ToggleProps } from '../components/Toggle/Toggle.types';
 import type { ToggleTokens } from '../components/Toggle/Toggle.tokens';
 import type { ColorToken } from '../tokens/atlassian/colors.generated';
@@ -71,6 +73,7 @@ export interface ComponentTheme<Props, Tokens> {
  */
 export interface ComponentThemes {
   Button?: ComponentTheme<ButtonProps, ButtonTokens>;
+  TextField?: ComponentTheme<TextFieldProps, TextFieldTokens>;
   Toggle?: ComponentTheme<ToggleProps, ToggleTokens>;
 }
 

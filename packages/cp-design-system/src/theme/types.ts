@@ -12,6 +12,24 @@ import type { TextFieldProps } from '../components/TextField/TextField.types';
 import type { TextFieldTokens } from '../components/TextField/TextField.tokens';
 import type { ToggleProps } from '../components/Toggle/Toggle.types';
 import type { ToggleTokens } from '../components/Toggle/Toggle.tokens';
+import type { BadgeProps } from '../components/Badge/Badge.types';
+import type { BadgeTokens } from '../components/Badge/Badge.types';
+import type { BannerProps } from '../components/Banner/Banner.types';
+import type { BannerTokens } from '../components/Banner/Banner.types';
+import type { EmptyStateProps } from '../components/EmptyState/EmptyState.types';
+import type { LozengeProps } from '../components/Lozenge/Lozenge.types';
+import type { LozengeTokens } from '../components/Lozenge/Lozenge.types';
+import type { PressableProps, PressableTokens } from '../components/Pressable/Pressable.types';
+import type { ProgressBarProps } from '../components/ProgressBar/ProgressBar.types';
+import type { ProgressBarTokens } from '../components/ProgressBar/ProgressBar.types';
+import type { ProgressIndicatorProps } from '../components/ProgressIndicator/ProgressIndicator.types';
+import type { ProgressIndicatorTokens } from '../components/ProgressIndicator/ProgressIndicator.types';
+import type { SectionMessageProps } from '../components/SectionMessage/SectionMessage.types';
+import type { SectionMessageTokens } from '../components/SectionMessage/SectionMessage.types';
+import type { SkeletonProps } from '../components/Skeleton/Skeleton.types';
+import type { SkeletonTokens } from '../components/Skeleton/Skeleton.types';
+import type { TagProps } from '../components/Tag/Tag.types';
+import type { TagTokens } from '../components/Tag/Tag.types';
 import type { ColorToken } from '../tokens/atlassian/colors.generated';
 import type { atlassianOpacity } from '../tokens/atlassian/colors.generated';
 import type { atlassianSpace } from '../tokens/atlassian/spacing.generated';
@@ -80,6 +98,16 @@ export interface ComponentTheme<Props, Tokens> {
  * as it is built.
  */
 export interface ComponentThemes {
+  Badge?: ComponentTheme<BadgeProps, BadgeTokens>;
+  Banner?: ComponentTheme<BannerProps, BannerTokens>;
+  EmptyState?: ComponentTheme<EmptyStateProps, Record<string, never>>;
+  Lozenge?: ComponentTheme<LozengeProps, LozengeTokens>;
+  Pressable?: ComponentTheme<PressableProps, PressableTokens>;
+  ProgressBar?: ComponentTheme<ProgressBarProps, ProgressBarTokens>;
+  ProgressIndicator?: ComponentTheme<ProgressIndicatorProps, ProgressIndicatorTokens>;
+  SectionMessage?: ComponentTheme<SectionMessageProps, SectionMessageTokens>;
+  Skeleton?: ComponentTheme<SkeletonProps, SkeletonTokens>;
+  Tag?: ComponentTheme<TagProps, TagTokens>;
   Button?: ComponentTheme<ButtonProps, ButtonTokens>;
   Checkbox?: ComponentTheme<CheckboxProps, CheckboxTokens>;
   /** Flag tokens apply to every appearance; use a function of the theme to vary them. */

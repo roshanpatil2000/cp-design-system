@@ -7,18 +7,18 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { stopAnimation } from '../../motion/worklet.native';
-
-export interface SpinnerProps {
-  size: number;
-  color: string;
-  testID?: string;
-}
+import { useTheme } from '../../theme/context';
+import { spinnerColor, spinnerPx, type SpinnerProps } from './Spinner.types';
 
 /**
- * A rotating three-quarter ring. Internal for now (used by Button); it becomes a public component
- * with its own tokens later. It keeps spinning with reduced motion because it conveys "busy".
+ * A rotating three-quarter ring. It keeps spinning with reduced motion because it conveys "busy".
  */
-export function Spinner({ size, color, testID }: SpinnerProps) {
+export function Spinner(props: SpinnerProps) {
+  const theme = useTheme();
+  const size = spinnerPx(props.size);
+  const color = spinnerColor(theme, props);
+  const { testID } = props;
+  const label = props.label === undefined ? 'Loading' : props.label;
   const stroke = Math.max(1.5, size / 8);
   const rotation = useSharedValue(0);
 
@@ -35,7 +35,9 @@ export function Spinner({ size, color, testID }: SpinnerProps) {
   return (
     <Animated.View
       testID={testID}
-      accessible={false}
+      {...(label
+        ? { accessible: true, accessibilityRole: 'progressbar' as const, accessibilityLabel: label }
+        : { accessible: false })}
       style={[
         {
           width: size,

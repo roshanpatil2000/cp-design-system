@@ -138,10 +138,11 @@ import { atlassianLightColors, atlassianSpace, atlassianEasings } from 'cp-desig
 
 Each component is built and tested on both platforms before release.
 
-| Status        | Component                                                                                                                                                               |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Ready (0.3.0) | [Button](#button), [Toggle](#toggle), [Text field](#text-field), [Checkbox](#checkbox), [Radio group](#radio-group), [Flag](#flag-toast), [Modal dialog](#modal-dialog) |
-| Planned       | Select, Spinner, Lozenge, Badge, Tooltip, Tabs, Avatar and more                                                                                                         |
+| Status        | Component                                                                                                                                                                                                                  |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ready (0.3.0) | [Button](#button), [Toggle](#toggle), [Text field](#text-field), [Checkbox](#checkbox), [Radio group](#radio-group), [Flag](#flag-toast), [Modal dialog](#modal-dialog)                                                    |
+| Next release  | Building blocks: [Box, Stack, Inline, Text, Heading, Icon, Pressable](#building-blocks). Feedback: [Spinner, ProgressBar, ProgressIndicator, Lozenge, Badge, Tag, Banner, SectionMessage, Skeleton, EmptyState](#feedback) |
+| Planned       | Select, TextArea, Tooltip, Popup, Drawer, Dropdown menu, Tabs, Avatar and more                                                                                                                                             |
 
 ### Text field
 
@@ -434,6 +435,72 @@ import { Button, Modal } from 'cp-design-system';
 | `tokens`, `motion`           |            | `motion={false}` turns the animation off                                   |
 
 Theme key: `components.Modal`.
+
+### Building blocks
+
+Layout and typography primitives. Every value comes from theme tokens, so a brand change flows through your own screens too.
+
+```tsx
+import { Box, Heading, Icon, Inline, Pressable, Stack, Text } from 'cp-design-system';
+
+<Box padding="200" backgroundColor="elevation.surface.raised" borderRadius="large">
+  <Stack space="100">
+    <Heading size="small">Weekly report</Heading>
+    <Text color="color.text.subtle" maxLines={2}>
+      Three projects shipped this week.
+    </Text>
+    <Inline space="100" separator="·" alignBlock="center">
+      <Text size="small">Design</Text>
+      <Text size="small">Engineering</Text>
+    </Inline>
+  </Stack>
+</Box>
+
+<Pressable padding="150" onPress={openProject}>
+  {({ hovered }) => <Icon glyph="chevron-right" color={hovered ? 'color.icon.brand' : undefined} />}
+</Pressable>
+```
+
+| Component   | What it does                                                                                                                                                                                                    |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Box`       | Padding (`padding`, `paddingX`, `paddingY`, sides), `backgroundColor`, `borderColor`, `borderWidth`, `borderRadius` from tokens; `as` picks the HTML element on web                                             |
+| `Stack`     | A column with a token `space` gap; `alignInline`, `grow="fill"`                                                                                                                                                 |
+| `Inline`    | A row with `space`, `rowSpace`, `alignBlock`, `alignInline`, `spread="space-between"`, `shouldWrap` and an optional `separator`                                                                                 |
+| `Text`      | Body text: `size` small/medium/large, `weight` regular/medium/semibold/bold, a theme `color`, `align`, `maxLines`                                                                                               |
+| `Heading`   | Atlassian heading scale from `xxlarge` to `xxsmall`. On web the `h1`–`h6` level follows the size unless you set `as`; on native it's a header for screen readers                                                |
+| `Icon`      | Built-in glyphs (`check`, `cross`, `add`, `remove`, four chevrons, `info`, `success`, `warning`, `error`) drawn without SVG, so no extra native dependency. Decorative unless you pass `label`                  |
+| `Pressable` | An unstyled button with the system's hover and pressed backgrounds, a spring squish and a keyboard focus ring. Children can be a function of `{ hovered, pressed, focused }`. Theme key: `components.Pressable` |
+
+### Feedback
+
+```tsx
+import { Badge, Banner, EmptyState, Lozenge, ProgressBar, SectionMessage, Skeleton, Spinner, Tag } from 'cp-design-system';
+
+<ProgressBar value={0.4} label="Uploading report" />
+<Lozenge appearance="success" isBold>Done</Lozenge>
+<Badge appearance="important">{unread}</Badge>
+<Tag text="Design" color="purple" isRemovable onRemove={() => removeTag('Design')} />
+<Banner appearance="error">We're having trouble connecting.</Banner>
+<SectionMessage appearance="warning" title="Check your settings" actions={[{ content: 'Fix it', onPress: fix }]}>
+  Two fields need attention.
+</SectionMessage>
+{loading ? <Skeleton width={160} height={14} /> : <Text>{name}</Text>}
+```
+
+| Component           | Highlights                                                                                                                                          |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Spinner`           | Sizes `xsmall` 8 to `xlarge` 96, `appearance` inherit/invert, labelled "Loading" (or `label={false}`). Fades in; keeps spinning with reduced motion |
+| `ProgressBar`       | Springs to new `value`s (0–1); `isIndeterminate` loops a segment. Appearances: default, brand, success, inverse                                     |
+| `ProgressIndicator` | Step dots; the current one stretches into a pill. With `onSelect` the dots become tabs                                                              |
+| `Lozenge`           | Status labels: default, inprogress, moved, new, removed, success; subtle or `isBold`                                                                |
+| `Badge`             | Counts with `max` (default 99 → `99+`); pops when the value changes. Appearances: default, primary, primaryInverted, important, added, removed      |
+| `Tag`               | Eleven colors, square or `rounded`; removable tags shrink away, then call `onRemove`                                                                |
+| `Banner`            | Full-width warning, error or announcement; `isOpen` slides it in and out                                                                            |
+| `SectionMessage`    | Information, warning, error, success or discovery messages with a title and link actions                                                            |
+| `Skeleton`          | Placeholder shapes that pulse while loading (held still with reduced motion); hidden from assistive tech                                            |
+| `EmptyState`        | Image, header, description and actions for empty screens; rises in on mount                                                                         |
+
+Each one has a theme key under `components` (for example `components.Badge`) for default props, tokens and motion, plus per-instance `tokens` and `motion` props, as for every component.
 
 ## License
 

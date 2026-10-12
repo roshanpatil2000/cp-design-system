@@ -13,8 +13,25 @@ import * as Haptics from 'expo-haptics';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import {
+  Badge,
+  Banner,
+  Box,
   Button,
   Checkbox,
+  EmptyState,
+  Heading as DSHeading,
+  Icon,
+  Inline,
+  Lozenge,
+  Pressable as DSPressable,
+  ProgressBar,
+  ProgressIndicator,
+  SectionMessage,
+  Skeleton,
+  Spinner,
+  Stack,
+  Tag,
+  Text as DSText,
   FlagProvider,
   Modal,
   RadioGroup,
@@ -261,6 +278,167 @@ function ModalDemo() {
   );
 }
 
+/** Building blocks and feedback components from 0.4.0. */
+function FeedbackDemo() {
+  const [progress, setProgress] = useState(0.3);
+  const [step, setStep] = useState(1);
+  const [count, setCount] = useState(3);
+  const [banner, setBanner] = useState(true);
+  const [loaded, setLoaded] = useState(false);
+  const [tags, setTags] = useState(['Design', 'Motion', 'Native']);
+  return (
+    <Stack space="300">
+      <Stack space="150">
+        <DSHeading size="small">Typography and layout</DSHeading>
+        <DSText>
+          Body text with a <DSText weight="bold">bold</DSText> word.
+        </DSText>
+        <Inline space="100" separator="·" alignBlock="center">
+          <DSText size="small" color="color.text.subtle">
+            Inline
+          </DSText>
+          <DSText size="small" color="color.text.subtle">
+            with
+          </DSText>
+          <DSText size="small" color="color.text.subtle">
+            separators
+          </DSText>
+        </Inline>
+        <Inline space="150" alignBlock="center" shouldWrap>
+          {(
+            [
+              'check',
+              'cross',
+              'add',
+              'chevron-right',
+              'info',
+              'success',
+              'warning',
+              'error',
+            ] as const
+          ).map((g) => (
+            <Icon key={g} glyph={g} size="large" />
+          ))}
+        </Inline>
+        <DSPressable padding="150" onPress={() => setCount((c) => c + 1)} testID="pressable-card">
+          <Inline space="100" alignBlock="center">
+            <DSText weight="semibold">Pressable card (tap me)</DSText>
+            <Badge appearance="primary">{count}</Badge>
+          </Inline>
+        </DSPressable>
+      </Stack>
+
+      <Stack space="150">
+        <DSHeading size="small">Status</DSHeading>
+        <Inline space="100" shouldWrap>
+          <Lozenge appearance="inprogress">In progress</Lozenge>
+          <Lozenge appearance="success" isBold>
+            Done
+          </Lozenge>
+          <Lozenge appearance="removed">Blocked</Lozenge>
+          <Badge appearance="important">{120}</Badge>
+          <Badge appearance="added">{4}</Badge>
+        </Inline>
+        <Inline space="100" shouldWrap>
+          {tags.map((t) => (
+            <Tag
+              key={t}
+              text={t}
+              color="blue"
+              appearance="rounded"
+              isRemovable
+              onRemove={() => setTags((all) => all.filter((x) => x !== t))}
+            />
+          ))}
+        </Inline>
+      </Stack>
+
+      <Stack space="150">
+        <DSHeading size="small">Progress</DSHeading>
+        <ProgressBar value={progress} label="Upload" testID="progress" />
+        <ProgressBar isIndeterminate appearance="brand" />
+        <Inline space="200" alignBlock="center">
+          <Spinner size="small" />
+          <Spinner />
+          <ProgressIndicator
+            count={5}
+            selectedIndex={step}
+            onSelect={setStep}
+            appearance="primary"
+          />
+        </Inline>
+        <Inline space="100">
+          <Button
+            spacing="compact"
+            onPress={() => setProgress((v) => (v >= 1 ? 0 : Math.min(1, v + 0.2)))}
+          >
+            Advance
+          </Button>
+          <Button spacing="compact" onPress={() => setStep((v) => (v + 1) % 5)}>
+            Next step
+          </Button>
+        </Inline>
+      </Stack>
+
+      <Stack space="150">
+        <DSHeading size="small">Messages</DSHeading>
+        <Box style={{ marginHorizontal: -20 }}>
+          <Banner appearance="warning" isOpen={banner}>
+            Your trial ends in 3 days.
+          </Banner>
+        </Box>
+        <Button spacing="compact" onPress={() => setBanner((v) => !v)}>
+          {banner ? 'Hide banner' : 'Show banner'}
+        </Button>
+        <SectionMessage
+          appearance="error"
+          title="Two fields need attention"
+          actions={[{ content: 'Fix them', onPress: () => {} }]}
+        >
+          Check the email and password fields.
+        </SectionMessage>
+      </Stack>
+
+      <Stack space="150">
+        <DSHeading size="small">Loading</DSHeading>
+        {loaded ? (
+          <Inline space="150" alignBlock="center">
+            <Box
+              backgroundColor="color.background.brand.bold"
+              borderRadius="full"
+              style={{ width: 40, height: 40 }}
+            />
+            <Stack space="050">
+              <DSText weight="semibold">Ada Lovelace</DSText>
+              <DSText size="small" color="color.text.subtle">
+                Updated the tokens
+              </DSText>
+            </Stack>
+          </Inline>
+        ) : (
+          <Inline space="150" alignBlock="center">
+            <Skeleton width={40} height={40} borderRadius="full" />
+            <Stack space="100">
+              <Skeleton width={140} height={14} />
+              <Skeleton width={200} height={12} />
+            </Stack>
+          </Inline>
+        )}
+        <Button spacing="compact" onPress={() => setLoaded((v) => !v)}>
+          {loaded ? 'Show skeleton' : 'Load content'}
+        </Button>
+        <EmptyState
+          width="narrow"
+          image={<Icon glyph="info" size={40} color="color.icon.subtle" />}
+          header="No projects yet"
+          description="Create one to get started."
+          primaryAction={<Button appearance="primary">Create project</Button>}
+        />
+      </Stack>
+    </Stack>
+  );
+}
+
 function AsyncToggleRow() {
   const [on, setOn] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -445,6 +623,11 @@ function Foundations({
           </Button>
         </View>
         <AsyncSaveButton />
+      </View>
+
+      <View style={{ gap: theme.space['150'] }}>
+        <Heading>Building blocks and feedback</Heading>
+        <FeedbackDemo />
       </View>
 
       <View style={{ gap: theme.space['100'] }}>

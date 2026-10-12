@@ -1,24 +1,29 @@
 import { motion } from 'motion/react';
-
-export interface SpinnerProps {
-  size: number;
-  color: string;
-  testID?: string;
-}
+import { useTheme } from '../../theme/context';
+import { spinnerColor, spinnerPx, type SpinnerProps } from './Spinner.types';
 
 /**
- * A rotating three-quarter ring. Internal for now (used by Button); it becomes a public component
- * with its own tokens later. It keeps spinning with reduced motion because it conveys "busy".
+ * A rotating three-quarter ring that fades in. It keeps spinning with reduced motion because it
+ * conveys "busy".
  */
-export function Spinner({ size, color, testID }: SpinnerProps) {
+export function Spinner(props: SpinnerProps) {
+  const theme = useTheme();
+  const size = spinnerPx(props.size);
+  const color = spinnerColor(theme, props);
+  const { testID } = props;
+  const label = props.label === undefined ? 'Loading' : props.label;
   const stroke = Math.max(1.5, size / 8);
   return (
     <motion.span
-      aria-hidden
+      {...(label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': true })}
       data-testid={testID}
       data-part="spinner"
-      animate={{ rotate: 360 }}
-      transition={{ duration: 0.8, ease: 'linear', repeat: Infinity }}
+      initial={{ opacity: 0 }}
+      animate={{ rotate: 360, opacity: 1 }}
+      transition={{
+        rotate: { duration: 0.8, ease: 'linear', repeat: Infinity },
+        opacity: { duration: 0.2 },
+      }}
       style={{
         display: 'inline-block',
         boxSizing: 'border-box',

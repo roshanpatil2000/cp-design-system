@@ -151,7 +151,7 @@ export function Button(input: ButtonProps) {
               justifyContent: 'center',
             }}
           >
-            <Spinner size={t.spinnerSize} color={b.textColor} />
+            <Spinner size={t.spinnerSize} color={b.textColor} label={false} />
           </motion.span>
         )}
       </AnimatePresence>

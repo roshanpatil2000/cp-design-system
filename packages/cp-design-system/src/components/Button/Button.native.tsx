@@ -127,6 +127,7 @@ export function Button(input: ButtonProps) {
             ]}
           >
             <Spinner
+              label={false}
               size={t.spinnerSize}
               color={b.textColor}
               testID={props.testID && `${props.testID}-spinner`}

@@ -53,7 +53,8 @@ export function ProgressBar(input: ProgressBarProps) {
         ],
       };
     }
-    return { width: width.value * progress.value, transform: [{ translateX: 0 }] };
+    // A percentage needs no measurement, so the bar shows on the very first frame.
+    return { width: `${progress.value * 100}%`, transform: [{ translateX: 0 }] };
   });
 
   return (

@@ -13,14 +13,21 @@ export function Tabs(input: TabsProps) {
   const baseId = useId();
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const listRef = useRef<HTMLDivElement>(null);
-  const [indicator, setIndicator] = useState({ left: 0, width: 0 });
+  // `placed` stays false until the first measurement, so the underline appears in place on load
+  // and only springs when the selection changes.
+  const [indicator, setIndicator] = useState({ left: 0, width: 0, placed: false });
   const [hovered, setHovered] = useState<string | null>(null);
   const [focusVisible, setFocusVisible] = useState<string | null>(null);
 
   useLayoutEffect(() => {
     const measure = () => {
       const el = tabRefs.current[s.selectedIndex];
-      if (el) setIndicator({ left: el.offsetLeft, width: el.offsetWidth });
+      if (el)
+        setIndicator((prev) => ({
+          left: el.offsetLeft,
+          width: el.offsetWidth,
+          placed: prev.placed || prev.width > 0,
+        }));
     };
     measure();
     window.addEventListener('resize', measure);
@@ -129,7 +136,7 @@ export function Tabs(input: TabsProps) {
           data-part="indicator"
           initial={false}
           animate={{ x: indicator.left, width: indicator.width }}
-          transition={spring ? { type: 'spring', ...spring } : { duration: 0 }}
+          transition={spring && indicator.placed ? { type: 'spring', ...spring } : { duration: 0 }}
           style={{
             position: 'absolute',
             left: 0,

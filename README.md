@@ -4,9 +4,9 @@ Animated, brand-themable design system for React (web) and React Native, built o
 
 ## One API, all platforms
 
-![The same settings screen, with a text field, toggles and buttons, rendered on the web, iOS and Android](docs/images/one-api-all-platforms.png)
+![The same project settings screen, with breadcrumbs, avatars, tabs, a text field, a select, a toggle, a checkbox, a progress bar and a split button, rendered on the web, iOS and Android](docs/images/one-api-all-platforms.png)
 
-The same `<TextField />`, `<Toggle />` and `<Button />` from `cp-design-system`, rendered natively on each platform: the DOM with Motion on the web, and native views with Reanimated and Gesture Handler on iOS and Android. The screen is `apps/storybook/stories/Showcase.stories.tsx` on the web and `apps/expo-example/Showcase.tsx` on mobile. To regenerate the image, see [docs/showcase](docs/showcase/README.md).
+The same components from `cp-design-system`, rendered natively on each platform: the DOM with Motion on the web, and native views with Reanimated and Gesture Handler on iOS and Android. The screen shows Breadcrumbs, Heading, Lozenge, AvatarGroup, Badge, Tabs, TextField, Select, Toggle, Checkbox, ProgressBar, Button and SplitButton, all in one violet brand theme. It's `apps/storybook/stories/Showcase.stories.tsx` on the web and `apps/expo-example/Showcase.tsx` on mobile. To regenerate the image, see [docs/showcase](docs/showcase/README.md).
 
 ## How it works
 

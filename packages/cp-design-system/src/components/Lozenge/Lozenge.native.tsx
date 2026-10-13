@@ -7,29 +7,32 @@ import { getLozengeTokens, type LozengeProps } from './Lozenge.types';
 export function Lozenge(input: LozengeProps) {
   const { props, tokens: t } = useComponent('Lozenge', input, getLozengeTokens);
   return (
-    <View
-      testID={props.testID}
-      style={{
-        alignSelf: 'flex-start',
-        maxWidth: props.maxWidth ?? 200,
-        paddingHorizontal: t.paddingX,
-        borderRadius: t.radius,
-        backgroundColor: t.background,
-      }}
-    >
-      <Text
-        numberOfLines={1}
+    // The row wrapper sizes the chip to its content in columns, without pinning it to the top
+    // of a centered row (as alignSelf: 'flex-start' would).
+    <View style={{ flexDirection: 'row' }}>
+      <View
+        testID={props.testID}
         style={{
-          color: t.text,
-          fontFamily: t.fontFamily,
-          fontSize: t.fontSize,
-          lineHeight: t.lineHeight,
-          fontWeight: fontWeightFor(t.fontWeight),
-          textTransform: t.uppercase ? 'uppercase' : 'none',
+          maxWidth: props.maxWidth ?? 200,
+          paddingHorizontal: t.paddingX,
+          borderRadius: t.radius,
+          backgroundColor: t.background,
         }}
       >
-        {props.children}
-      </Text>
+        <Text
+          numberOfLines={1}
+          style={{
+            color: t.text,
+            fontFamily: t.fontFamily,
+            fontSize: t.fontSize,
+            lineHeight: t.lineHeight,
+            fontWeight: fontWeightFor(t.fontWeight),
+            textTransform: t.uppercase ? 'uppercase' : 'none',
+          }}
+        >
+          {props.children}
+        </Text>
+      </View>
     </View>
   );
 }

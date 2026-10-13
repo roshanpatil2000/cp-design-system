@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { springTo } from '../../motion/worklet.native';
 import { fontWeightFor } from '../../theme/createTheme';
@@ -26,32 +26,34 @@ export function Badge(input: BadgeProps) {
     return { transform: [{ scale: scale.value }] };
   });
   return (
-    <Animated.View
-      testID={props.testID}
-      style={[
-        {
-          alignSelf: 'flex-start',
-          minWidth: t.minWidth,
-          paddingHorizontal: t.paddingX,
-          borderRadius: t.radius,
-          backgroundColor: t.background,
-        },
-        style,
-      ]}
-    >
-      <Text
-        style={{
-          color: t.text,
-          fontFamily: t.fontFamily,
-          fontSize: t.fontSize,
-          lineHeight: t.lineHeight,
-          fontWeight: fontWeightFor(t.fontWeight),
-          textAlign: 'center',
-          fontVariant: ['tabular-nums'],
-        }}
+    // Sizes to content in columns without pinning to the top of a centered row.
+    <View style={{ flexDirection: 'row' }}>
+      <Animated.View
+        testID={props.testID}
+        style={[
+          {
+            minWidth: t.minWidth,
+            paddingHorizontal: t.paddingX,
+            borderRadius: t.radius,
+            backgroundColor: t.background,
+          },
+          style,
+        ]}
       >
-        {text}
-      </Text>
-    </Animated.View>
+        <Text
+          style={{
+            color: t.text,
+            fontFamily: t.fontFamily,
+            fontSize: t.fontSize,
+            lineHeight: t.lineHeight,
+            fontWeight: fontWeightFor(t.fontWeight),
+            textAlign: 'center',
+            fontVariant: ['tabular-nums'],
+          }}
+        >
+          {text}
+        </Text>
+      </Animated.View>
+    </View>
   );
 }

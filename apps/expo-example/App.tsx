@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
+  Linking,
   Platform,
   Pressable,
   StatusBar as RNStatusBar,
@@ -976,6 +977,14 @@ export default function App() {
   const [dark, setDark] = useState(false);
   const [reduced, setReduced] = useState(false);
   const [showcase, setShowcase] = useState(false);
+  // Opening exp://<host>/--/showcase jumps straight to the showcase screen, so the README
+  // screenshots can be captured without tapping (see docs/showcase).
+  useEffect(() => {
+    const open = (url: string | null) => url?.includes('/--/showcase') && setShowcase(true);
+    void Linking.getInitialURL().then(open);
+    const sub = Linking.addEventListener('url', ({ url }) => open(url));
+    return () => sub.remove();
+  }, []);
   const pair = brands[brand] ?? atlassianTheme;
   const surface = pair[dark ? 'dark' : 'light'].color['elevation.surface'];
 

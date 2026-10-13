@@ -46,7 +46,7 @@ describe('Feedback (native)', () => {
     await act(async () => {
       fireEvent(bar, 'layout', { nativeEvent: { layout: { width: 200, height: 6 } } });
     });
-    await waitFor(() => expect(getAnimatedStyle(screen.getByTestId('p-bar')).width).toBe(50));
+    await waitFor(() => expect(getAnimatedStyle(screen.getByTestId('p-bar')).width).toBe('25%'));
   });
 
   it('ProgressIndicator stretches the current dot and selects steps', async () => {

@@ -1,36 +1,41 @@
-import type { ReactNode } from 'react';
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button, TextField, ThemeProvider, Toggle, createTheme, useTheme } from 'cp-design-system';
+import {
+  AvatarGroup,
+  Badge,
+  Breadcrumbs,
+  Button,
+  Checkbox,
+  Heading,
+  Inline,
+  Lozenge,
+  ProgressBar,
+  Select,
+  SplitButton,
+  Stack,
+  Tabs,
+  TextField,
+  ThemeProvider,
+  Toggle,
+  createTheme,
+  useTheme,
+} from 'cp-design-system';
 
 // Web twin of apps/expo-example/Showcase.tsx, used for the README's side-by-side screenshot.
 const violet = createTheme({ brand: '#7C3AED' });
 
-function Row({ label, hint, children }: { label: string; hint: string; children: ReactNode }) {
-  const theme = useTheme();
-  return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: `${theme.space['150']}px 0`,
-        borderBottom: `1px solid ${theme.color['color.border']}`,
-      }}
-    >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <span style={{ color: theme.color['color.text'], fontSize: 16, fontWeight: 500 }}>
-          {label}
-        </span>
-        <span style={{ color: theme.color['color.text.subtlest'], fontSize: 12 }}>{hint}</span>
-      </div>
-      {children}
-    </div>
-  );
-}
+const team = [
+  'Ada Lovelace',
+  'Grace Hopper',
+  'Alan Turing',
+  'Margaret Hamilton',
+  'Linus Torvalds',
+].map((name) => ({ name }));
 
-function Showcase() {
+function ProjectSettings() {
   const theme = useTheme();
-  const heading = theme.text['heading.large'];
+  const [visibility, setVisibility] = useState<string | null>('team');
+  const text = { color: theme.color['color.text'], fontSize: 14, lineHeight: '20px' };
   return (
     <div
       style={{
@@ -39,49 +44,66 @@ function Showcase() {
         fontFamily: 'system-ui, -apple-system, sans-serif',
       }}
     >
-      <h1
-        style={{
-          margin: 0,
-          color: theme.color['color.text'],
-          fontSize: heading.fontSize,
-          lineHeight: `${heading.lineHeight}px`,
-          fontWeight: heading.fontWeight,
-        }}
-      >
-        Settings
-      </h1>
-      <p style={{ margin: `0 0 ${theme.space['200']}px`, color: theme.color['color.text.subtle'] }}>
-        cp-design-system · TextField · Toggle · Button
-      </p>
-      <TextField label="Display name" defaultValue="Roshan Patil" maxCharacters={30} />
-      <Row label="Wi-Fi" hint="On">
-        <Toggle label="Wi-Fi" defaultChecked />
-      </Row>
-      <Row label="Bluetooth" hint="Off">
-        <Toggle label="Bluetooth" />
-      </Row>
-      <ThemeProvider theme={violet}>
-        <Row label="Dark mode" hint='Large · brand="#7C3AED"'>
-          <Toggle label="Dark mode" size="large" appearance="brand" defaultChecked />
-        </Row>
-      </ThemeProvider>
-      <Row label="Sync" hint="Loading">
-        <Toggle label="Sync" defaultChecked isLoading motion={false} />
-      </Row>
-      <Row label="Airplane mode" hint="Disabled">
-        <Toggle label="Airplane mode" isDisabled />
-      </Row>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          gap: theme.space['100'],
-          marginTop: theme.space['300'],
-        }}
-      >
-        <Button appearance="subtle">Cancel</Button>
-        <Button appearance="primary">Save</Button>
-      </div>
+      <Stack space="200">
+        <Breadcrumbs
+          items={[{ label: 'Projects', href: '#projects' }, { label: 'Design system' }]}
+        />
+        <Inline space="100" alignBlock="center">
+          <Heading size="large" as="h1">
+            Design system
+          </Heading>
+          <Lozenge appearance="inprogress">In progress</Lozenge>
+        </Inline>
+        <Inline space="100" alignBlock="center">
+          <AvatarGroup data={team} size="small" maxCount={4} />
+          <span style={{ color: theme.color['color.text.subtle'], fontSize: 14 }}>5 members</span>
+          <Badge appearance="primary">{12}</Badge>
+        </Inline>
+        <Tabs
+          defaultSelected="settings"
+          tabs={[
+            { id: 'overview', label: 'Overview' },
+            { id: 'settings', label: 'Settings' },
+            { id: 'members', label: 'Members' },
+          ]}
+        />
+        <TextField label="Project name" defaultValue="cp-design-system" />
+        <Select
+          label="Visibility"
+          value={visibility}
+          onChange={setVisibility}
+          options={[
+            { value: 'private', label: 'Private' },
+            { value: 'team', label: 'Team' },
+            { value: 'public', label: 'Public' },
+          ]}
+        />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={text}>Email updates</span>
+          <Toggle label="Email updates" size="large" appearance="brand" defaultChecked />
+        </div>
+        <Checkbox label="Notify me when I'm mentioned" defaultChecked />
+        <Stack space="075">
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span style={text}>Sprint progress</span>
+            <span style={{ ...text, color: theme.color['color.text.subtle'] }}>68%</span>
+          </div>
+          <ProgressBar value={0.68} appearance="brand" label="Sprint progress" />
+        </Stack>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            gap: theme.space['100'],
+            marginTop: theme.space['100'],
+          }}
+        >
+          <Button appearance="subtle">Cancel</Button>
+          <SplitButton appearance="primary" items={[{ label: 'Save as draft', onPress: () => {} }]}>
+            Save
+          </SplitButton>
+        </div>
+      </Stack>
     </div>
   );
 }
@@ -89,4 +111,10 @@ function Showcase() {
 const meta = { title: 'Showcase/Settings' } satisfies Meta;
 export default meta;
 
-export const Settings: StoryObj<typeof meta> = { render: () => <Showcase /> };
+export const Settings: StoryObj<typeof meta> = {
+  render: () => (
+    <ThemeProvider theme={violet}>
+      <ProjectSettings />
+    </ThemeProvider>
+  ),
+};

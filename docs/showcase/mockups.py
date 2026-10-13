@@ -128,9 +128,11 @@ def browser(screen, height):
 
 # Screenshots, cleaned of dev-only overlays.
 ios_shot = Image.open(f'{SRC}/ios-showcase.png').convert('RGB')
-ImageDraw.Draw(ios_shot).rectangle((880, 150, 1206, 400), fill=(255, 255, 255))  # Expo Go dev button
+# Expo Go's floating dev button, as a fraction of the screen so any iPhone size works.
+iw, ih = ios_shot.size
+ImageDraw.Draw(ios_shot).rectangle((0.73 * iw, 0.057 * ih, iw, 0.153 * ih), fill=(255, 255, 255))
 android_shot = Image.open(f'{SRC}/android-showcase.png').convert('RGB')
-ImageDraw.Draw(android_shot).rectangle((840, 100, 1080, 270), fill=(255, 255, 255))  # Expo Go dev button
+ImageDraw.Draw(android_shot).rectangle((840, 100, 1080, 340), fill=(255, 255, 255))  # Expo Go dev button + label
 ImageDraw.Draw(android_shot).rectangle((0, 2200, 1080, 2280), fill=(255, 255, 255))  # gesture pill
 web_shot = Image.open(f'{SRC}/web-desktop.png').convert('RGB')
 
@@ -153,7 +155,7 @@ d = ImageDraw.Draw(canvas)
 d.text((W / 2, 92 * S), 'One API, all platforms', font=font(64, True), fill=TITLE, anchor='mm')
 d.text(
     (W / 2, 158 * S),
-    'The same <TextField />, <Toggle /> and <Button /> code, rendered natively on the web, iOS and Android',
+    'The same 40 components and one theme, rendered natively on the web, iOS and Android',
     font=font(26),
     fill=SUBTITLE,
     anchor='mm',

@@ -71,7 +71,12 @@ export function Tabs(input: TabsProps) {
                 onLayout={(e) => {
                   const { x, width: w } = e.nativeEvent.layout;
                   layouts.current[i] = { x, width: w };
-                  if (i === s.selectedIndex) moveTo(i, false);
+                  // Re-apply on the next frame too: on Android a shared-value write during the
+                  // first layout can be lost, leaving the underline invisible.
+                  if (i === s.selectedIndex) {
+                    moveTo(i, false);
+                    requestAnimationFrame(() => moveTo(i, false));
+                  }
                 }}
                 style={({ pressed }) => ({
                   flex: props.shouldFitContainer ? 1 : undefined,

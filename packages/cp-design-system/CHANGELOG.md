@@ -1,5 +1,39 @@
 # Changelog
 
+## 0.5.0 (2026-10-13)
+
+Completes the planned component set: 40 components on web and React Native.
+
+### Added
+
+- **Actions.**
+  - `IconButton`.
+  - `LinkButton`: a real `<a href>` on web; opens the URL on native.
+  - `SplitButton`.
+- **Forms.**
+  - `Select`, with keyboard and typeahead on web.
+  - `TextArea`, which grows as you type and has a character counter.
+  - `Range`, a slider you can drag, tap or adjust from the keyboard; on native the drag runs on the UI thread.
+  - `Field`, which wraps any control with a label and messages.
+- **People.**
+  - `Avatar`, with initials fallback and presence.
+  - `AvatarGroup`, in stack or grid layout; "+N" expands it.
+- **Overlays.**
+  - `Popup` and `InlineDialog`.
+  - `Tooltip`: hover and focus on web, long-press on native.
+  - `DropdownMenu`, with sections, icons, descriptions and checkbox items.
+  - `Drawer`: a side panel on web and a swipeable bottom sheet on native.
+- **Navigation.**
+  - `Tabs`, with a springy underline and keyboard support.
+  - `Breadcrumbs`, which collapse long trails.
+  - `Pagination`.
+
+### Changed
+
+- Flags now appear above an open Modal or Drawer on native.
+- Button accepts `accessibilityHint`, and passes `aria-describedby` through, so tooltips describe it.
+- Anchored menus and popups flip and stay inside the screen on both platforms.
+
 ## 0.4.0 (2026-10-13)
 
 ### Added

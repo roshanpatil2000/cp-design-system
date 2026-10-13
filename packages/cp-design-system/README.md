@@ -140,7 +140,7 @@ Each component is built and tested on both platforms before release.
 
 | Status        | Component                                 |
 | ------------- | ----------------------------------------- |
-| Ready (0.5.0) | All 40 components: see the sections below |
+| Ready (0.5.1) | All 40 components: see the sections below |
 
 ### Text field
 

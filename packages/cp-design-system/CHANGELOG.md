@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.1 (2026-10-13)
+
+### Fixed
+
+- **Lozenge, Badge and Tag (native)** now center in a row (for example inside `Inline alignBlock="center"`) instead of sticking to the top.
+- **ProgressBar (native)** shows its fill on the first frame on Android.
+- **Tabs (native)** no longer leave the underline invisible after the first layout on Android.
+- **Tabs (web)** place the underline instantly on page load instead of animating it in from zero width.
+
 ## 0.5.0 (2026-10-13)
 
 Completes the planned component set: 40 components on web and React Native.

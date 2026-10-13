@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.4.0 (2026-10-13)
+
+### Added
+
+- **Building blocks.**
+  - `Box`, `Stack` and `Inline` for token-based spacing, color, borders and layout.
+  - `Text` and `Heading` on Atlassian's type scale.
+  - `Icon`, with 12 built-in glyphs and no SVG dependency.
+  - `Pressable`, the shared hover, press and focus treatment.
+- **Feedback.**
+  - `Spinner` is now public, with sizes, an inverted appearance and an accessible label.
+  - `ProgressBar` springs to new values and has an indeterminate state.
+  - `ProgressIndicator` dots stretch for the current step and can be selected.
+  - `Lozenge`.
+  - `Badge` caps counts at 99+ and pops when the value changes.
+  - `Tag` comes in 11 colors; removable tags animate out.
+  - `Banner` and `SectionMessage`.
+  - `Skeleton` pulses while loading.
+  - `EmptyState`.
+- Theme keys under `components` for the new components (default props, tokens and motion).
+
 ## 0.3.0 (2026-10-10)
 
 ### Added

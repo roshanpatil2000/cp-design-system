@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from '@jest/globals';
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { getAnimatedStyle } from 'react-native-reanimated';
 import { RadioGroup, ThemeProvider, createTheme, type ThemePair } from '../../index.native';
 import type { RadioGroupProps } from './Radio.types';
@@ -45,8 +45,10 @@ describe('RadioGroup (native)', () => {
     await fireEvent.press(radio('Green'));
     expect(onChange).toHaveBeenCalledWith('green');
     expect(radio('Green').props.accessibilityState.checked).toBe(true);
-    expect(getAnimatedStyle(screen.getByTestId('g-green-dot')).opacity).toBe(1);
-    expect(getAnimatedStyle(screen.getByTestId('g-red-dot')).opacity).toBe(0);
+    await waitFor(() =>
+      expect(getAnimatedStyle(screen.getByTestId('g-green-dot')).opacity).toBe(1),
+    );
+    await waitFor(() => expect(getAnimatedStyle(screen.getByTestId('g-red-dot')).opacity).toBe(0));
     await fireEvent.press(radio('Green'));
     expect(onChange).toHaveBeenCalledTimes(1);
   });
@@ -73,6 +75,8 @@ describe('RadioGroup (native)', () => {
   it('colors the selected radio from the theme', async () => {
     const theme = createTheme({ components: { Radio: { tokens: { checked: '#7C3AED' } } } });
     await setup({ defaultValue: 'red' }, theme);
-    expect(getAnimatedStyle(screen.getByTestId('g-red-circle')).backgroundColor).toBe('#7C3AED');
+    await waitFor(() =>
+      expect(getAnimatedStyle(screen.getByTestId('g-red-circle')).backgroundColor).toBe('#7C3AED'),
+    );
   });
 });

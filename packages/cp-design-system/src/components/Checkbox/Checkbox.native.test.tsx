@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from '@jest/globals';
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { getAnimatedStyle } from 'react-native-reanimated';
 import { Checkbox, ThemeProvider, createTheme, type ThemePair } from '../../index.native';
 import type { CheckboxProps } from './Checkbox.types';
@@ -35,10 +35,10 @@ describe('Checkbox (native)', () => {
     expect(state().checked).toBe(true);
     expect(onChange).toHaveBeenLastCalledWith(true);
     expect(haptics).toHaveBeenCalledWith('selection');
-    expect(getAnimatedStyle(screen.getByTestId('c-tick')).opacity).toBe(1);
+    await waitFor(() => expect(getAnimatedStyle(screen.getByTestId('c-tick')).opacity).toBe(1));
     await fireEvent.press(box());
     expect(onChange).toHaveBeenLastCalledWith(false);
-    expect(getAnimatedStyle(screen.getByTestId('c-tick')).opacity).toBe(0);
+    await waitFor(() => expect(getAnimatedStyle(screen.getByTestId('c-tick')).opacity).toBe(0));
   });
 
   it('follows the parent when controlled', async () => {
@@ -53,8 +53,8 @@ describe('Checkbox (native)', () => {
   it('reports mixed and shows the dash when indeterminate', async () => {
     const { onChange } = await setup({ isIndeterminate: true, isChecked: false });
     expect(state().checked).toBe('mixed');
-    expect(getAnimatedStyle(screen.getByTestId('c-dash')).opacity).toBe(1);
-    expect(getAnimatedStyle(screen.getByTestId('c-tick')).opacity).toBe(0);
+    await waitFor(() => expect(getAnimatedStyle(screen.getByTestId('c-dash')).opacity).toBe(1));
+    await waitFor(() => expect(getAnimatedStyle(screen.getByTestId('c-tick')).opacity).toBe(0));
     await fireEvent.press(box());
     expect(onChange).toHaveBeenCalledWith(true);
   });
@@ -69,15 +69,21 @@ describe('Checkbox (native)', () => {
   it('uses the selected, invalid and custom colors', async () => {
     const theme = createTheme({ components: { Checkbox: { tokens: { checked: '#7C3AED' } } } });
     const { rerender } = await setup({ defaultChecked: true }, { theme });
-    expect(getAnimatedStyle(screen.getByTestId('c-box')).backgroundColor).toBe('#7C3AED');
+    await waitFor(() =>
+      expect(getAnimatedStyle(screen.getByTestId('c-box')).backgroundColor).toBe('#7C3AED'),
+    );
     await rerender({ defaultChecked: true, tokens: { checked: '#123456' } });
-    expect(getAnimatedStyle(screen.getByTestId('c-box')).backgroundColor).toBe('#123456');
+    await waitFor(() =>
+      expect(getAnimatedStyle(screen.getByTestId('c-box')).backgroundColor).toBe('#123456'),
+    );
     await rerender({
       isChecked: false,
       isInvalid: true,
       tokens: { borderInvalid: '#FF0000' },
     });
-    expect(getAnimatedStyle(screen.getByTestId('c-box')).borderColor).toBe('#FF0000');
+    await waitFor(() =>
+      expect(getAnimatedStyle(screen.getByTestId('c-box')).borderColor).toBe('#FF0000'),
+    );
   });
 
   it('shows a required marker', async () => {

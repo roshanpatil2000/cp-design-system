@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { StyleSheet } from 'react-native';
-import { act, fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { getAnimatedStyle } from 'react-native-reanimated';
 import {
   Badge,
@@ -46,7 +46,7 @@ describe('Feedback (native)', () => {
     await act(async () => {
       fireEvent(bar, 'layout', { nativeEvent: { layout: { width: 200, height: 6 } } });
     });
-    expect(getAnimatedStyle(screen.getByTestId('p-bar')).width).toBe(50);
+    await waitFor(() => expect(getAnimatedStyle(screen.getByTestId('p-bar')).width).toBe(50));
   });
 
   it('ProgressIndicator stretches the current dot and selects steps', async () => {
@@ -54,8 +54,8 @@ describe('Feedback (native)', () => {
     await render(
       ui(<ProgressIndicator count={3} selectedIndex={1} onSelect={onSelect} testID="d" />),
     );
-    expect(getAnimatedStyle(screen.getByTestId('d-dot-1')).width).toBe(20);
-    expect(getAnimatedStyle(screen.getByTestId('d-dot-0')).width).toBe(8);
+    await waitFor(() => expect(getAnimatedStyle(screen.getByTestId('d-dot-1')).width).toBe(20));
+    await waitFor(() => expect(getAnimatedStyle(screen.getByTestId('d-dot-0')).width).toBe(8));
     await fireEvent.press(screen.getByRole('tab', { name: 'Step 3 of 3' }));
     expect(onSelect).toHaveBeenCalledWith(2);
   });

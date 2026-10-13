@@ -138,10 +138,9 @@ import { atlassianLightColors, atlassianSpace, atlassianEasings } from 'cp-desig
 
 Each component is built and tested on both platforms before release.
 
-| Status        | Component                                                                                                                                                                                                                                                                                              |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Ready (0.4.0) | [Button](#button), [Toggle](#toggle), [Text field](#text-field), [Checkbox](#checkbox), [Radio group](#radio-group), [Flag](#flag-toast), [Modal dialog](#modal-dialog), plus all [building blocks](#building-blocks) and [feedback](#feedback) components                                             |
-| Next release  | Actions: [IconButton, LinkButton, SplitButton](#actions). Forms: [Select, TextArea, Range, Field](#more-form-fields). People: [Avatar, AvatarGroup](#people). Overlays: [Popup, InlineDialog, Tooltip, DropdownMenu, Drawer](#more-overlays). Navigation: [Tabs, Breadcrumbs, Pagination](#navigation) |
+| Status        | Component                                 |
+| ------------- | ----------------------------------------- |
+| Ready (0.5.0) | All 40 components: see the sections below |
 
 ### Text field
 

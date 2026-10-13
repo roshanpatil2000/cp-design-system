@@ -1,4 +1,14 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
@@ -27,35 +37,69 @@ const BOTTOM = 32;
  * Renders flags (Atlassian's toasts) at the bottom of the screen over its children and gives
  * descendants `useFlags()` to show them. Wrap your app's root with it.
  */
+/**
+ * Lets overlays (Modal, Drawer) show flags on top of themselves: an RN Modal is a separate native
+ * window, so flags rendered by the provider would sit underneath it.
+ */
+interface FlagHost {
+  renderFlags: () => ReactNode;
+  register: (id: string) => () => void;
+  /** The most recently opened overlay; only it shows the flags. */
+  top: string | undefined;
+}
+const FlagHostContext = createContext<FlagHost | null>(null);
+
 export function FlagProvider(input: FlagProviderProps) {
   const props = useFlagProviderProps(input);
   const { flags, api, remove, dismissFlag } = useFlagStore(props, true);
+  const [outlets, setOutlets] = useState<string[]>([]);
+  const register = useCallback((id: string) => {
+    setOutlets((list) => [...list, id]);
+    return () => setOutlets((list) => list.filter((x) => x !== id));
+  }, []);
+  const renderFlags = () => (
+    <View
+      pointerEvents="box-none"
+      accessibilityLabel={props.label ?? 'Notifications'}
+      testID={props.testID ?? 'flag'}
+      style={[
+        StyleSheet.absoluteFill,
+        { justifyContent: 'flex-end', padding: EDGE, paddingBottom: BOTTOM },
+      ]}
+    >
+      {flags.map((flag) => (
+        <FlagItem
+          key={flag.id}
+          flag={flag}
+          provider={props}
+          onDismiss={() => dismissFlag(flag.id)}
+          onRemoved={() => remove(flag.id)}
+        />
+      ))}
+    </View>
+  );
   return (
     <FlagContext.Provider value={api}>
-      <View style={{ flex: 1 }}>
-        {props.children}
-        <View
-          pointerEvents="box-none"
-          accessibilityLabel={props.label ?? 'Notifications'}
-          testID={props.testID ?? 'flag'}
-          style={[
-            StyleSheet.absoluteFill,
-            { justifyContent: 'flex-end', padding: EDGE, paddingBottom: BOTTOM },
-          ]}
-        >
-          {flags.map((flag) => (
-            <FlagItem
-              key={flag.id}
-              flag={flag}
-              provider={props}
-              onDismiss={() => dismissFlag(flag.id)}
-              onRemoved={() => remove(flag.id)}
-            />
-          ))}
+      <FlagHostContext.Provider value={{ renderFlags, register, top: outlets[outlets.length - 1] }}>
+        <View style={{ flex: 1 }}>
+          {props.children}
+          {outlets.length === 0 ? renderFlags() : null}
         </View>
-      </View>
+      </FlagHostContext.Provider>
     </FlagContext.Provider>
   );
+}
+
+/**
+ * Internal: renders the app's flags inside an overlay's RN Modal while it's open, so they stay
+ * on top. Renders nothing without a FlagProvider.
+ */
+export function FlagOutlet() {
+  const host = useContext(FlagHostContext);
+  const id = useId();
+  const register = host?.register;
+  useEffect(() => register?.(id), [register, id]);
+  return host && host.top === id ? host.renderFlags() : null;
 }
 
 function FlagItem({

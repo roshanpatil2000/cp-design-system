@@ -138,11 +138,10 @@ import { atlassianLightColors, atlassianSpace, atlassianEasings } from 'cp-desig
 
 Each component is built and tested on both platforms before release.
 
-| Status        | Component                                                                                                                                                                                                                                                  |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Ready (0.4.0) | [Button](#button), [Toggle](#toggle), [Text field](#text-field), [Checkbox](#checkbox), [Radio group](#radio-group), [Flag](#flag-toast), [Modal dialog](#modal-dialog), plus all [building blocks](#building-blocks) and [feedback](#feedback) components |
-| Next release  | Actions: [IconButton, LinkButton, SplitButton](#actions). Forms: [Select, TextArea, Range, Field](#more-form-fields). People: [Avatar, AvatarGroup](#people)                                                                                               |
-| Planned       | Overlays (Popup, Tooltip, Drawer, Dropdown menu, Inline dialog) and Navigation (Tabs, Breadcrumbs, Pagination)                                                                                                                                             |
+| Status        | Component                                                                                                                                                                                                                                                                                              |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Ready (0.4.0) | [Button](#button), [Toggle](#toggle), [Text field](#text-field), [Checkbox](#checkbox), [Radio group](#radio-group), [Flag](#flag-toast), [Modal dialog](#modal-dialog), plus all [building blocks](#building-blocks) and [feedback](#feedback) components                                             |
+| Next release  | Actions: [IconButton, LinkButton, SplitButton](#actions). Forms: [Select, TextArea, Range, Field](#more-form-fields). People: [Avatar, AvatarGroup](#people). Overlays: [Popup, InlineDialog, Tooltip, DropdownMenu, Drawer](#more-overlays). Navigation: [Tabs, Breadcrumbs, Pagination](#navigation) |
 
 ### Text field
 
@@ -574,6 +573,74 @@ import { Avatar, AvatarGroup } from 'cp-design-system';
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Avatar`      | Sizes 16 to 128. Shows colored initials (the same color for a name everywhere) until the image loads, and if it fails. Presence dot, `square` for projects, and `onPress` |
 | `AvatarGroup` | Overlapping stack or grid. Stacked avatars lift on hover; the "+N" button expands the group with a staggered pop (or calls `onMorePress`)                                 |
+
+### More overlays
+
+```tsx
+import { Button, Drawer, DropdownMenu, IconButton, InlineDialog, Popup, Tooltip } from 'cp-design-system';
+
+<Popup
+  isOpen={open}
+  onClose={() => setOpen(false)}
+  label="Filters"
+  trigger={<Button onPress={() => setOpen(!open)}>Filters</Button>}
+  content={<FiltersForm />}
+/>
+
+<InlineDialog isOpen={help} onClose={() => setHelp(false)} content="Usernames must be unique.">
+  <IconButton icon="info" label="About usernames" onPress={() => setHelp(true)} />
+</InlineDialog>
+
+<Tooltip content="Copy link">
+  <IconButton icon="add" label="Copy" />
+</Tooltip>
+
+<DropdownMenu
+  trigger="Actions"
+  items={[
+    { label: 'Edit', icon: 'add', onPress: edit, group: 'Issue' },
+    { label: 'Compact rows', isChecked: compact, onCheckedChange: setCompact, group: 'View' },
+  ]}
+/>
+
+<Drawer isOpen={open} onClose={() => setOpen(false)} title="Create issue">
+  <IssueForm />
+</Drawer>
+```
+
+| Component      | Highlights                                                                                                                                                                                                                   |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Popup`        | A floating panel anchored to any trigger. Flips and stays on screen; closes on Escape, outside clicks and Android back; moves focus in and back on web                                                                       |
+| `InlineDialog` | A padded Popup for explaining the element it points at                                                                                                                                                                       |
+| `Tooltip`      | Web: shows on hover (after `delay`) or keyboard focus, hides on Escape, and links to the trigger with `aria-describedby`. Native: shows on long-press and lingers briefly; the text becomes the trigger's accessibility hint |
+| `DropdownMenu` | A button that opens a menu. Items can have sections (`group`), icons, descriptions, a disabled state, and checkboxes (the menu stays open while you toggle them). Use a text trigger or `{ icon, label }`                    |
+| `Drawer`       | Web: slides in from the left or right with a blanket, focus trap and scroll lock. Native: a bottom sheet you can swipe down on its handle to dismiss                                                                         |
+
+Flags now stay on top of an open Modal or Drawer on native too.
+
+### Navigation
+
+```tsx
+import { Breadcrumbs, Pagination, Tabs } from 'cp-design-system';
+
+<Tabs
+  label="Project"
+  tabs={[
+    { id: 'overview', label: 'Overview', content: <Overview /> },
+    { id: 'issues', label: 'Issues', content: <Issues /> },
+  ]}
+/>
+
+<Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Projects', href: '/projects' }, { label: 'Design system' }]} />
+
+<Pagination pages={20} selectedIndex={page} onChange={setPage} />
+```
+
+| Component     | Highlights                                                                                                                                                                                |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Tabs`        | An underline that springs to the selected tab, with a fading panel. Web: arrow, Home and End keys with roving focus. Native: the tab row scrolls. `shouldFitContainer` gives equal widths |
+| `Breadcrumbs` | The last item is the current page. Long trails collapse into "…", which expands in place                                                                                                  |
+| `Pagination`  | Previous and next arrows and page numbers, with "…" for long ranges. The current page uses `aria-current`                                                                                 |
 
 ## License
 

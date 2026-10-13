@@ -15,6 +15,7 @@ export function IconButton(input: IconButtonProps) {
   return (
     <ButtonBase
       accessibilityLabel={props.label}
+      {...{ 'aria-describedby': (input as { 'aria-describedby'?: string })['aria-describedby'] }}
       onPress={props.onPress}
       appearance={props.appearance}
       spacing={props.spacing}

@@ -1,9 +1,19 @@
 import type { Theme } from '../../theme/types';
 
+import type { IconGlyph } from '../Icon/Icon.types';
+
 export interface MenuOption {
   value: string;
   label: string;
   isDisabled?: boolean;
+  /** Secondary line under the label. */
+  description?: string;
+  /** Glyph before the label. */
+  icon?: IconGlyph;
+  /** Makes the item a checkbox item (menuitemcheckbox) showing a check when true. */
+  isChecked?: boolean;
+  /** Starts a new titled section; items keep the group of the last item that set one. */
+  group?: string;
 }
 
 /** Visual values for dropdown menus (Select's list, SplitButton's actions). */
@@ -28,6 +38,10 @@ export interface MenuTokens {
   lineHeight: number;
   fontFamily?: string;
   shadow: string;
+  description: string;
+  groupTitle: string;
+  divider: string;
+  icon: string;
 }
 
 export function getMenuTokens(theme: Theme): MenuTokens {
@@ -50,6 +64,10 @@ export function getMenuTokens(theme: Theme): MenuTokens {
     fontSize: theme.text.body.fontSize,
     lineHeight: theme.text.body.lineHeight,
     fontFamily: theme.fontFamily.body,
+    description: c['color.text.subtlest'],
+    groupTitle: c['color.text.subtle'],
+    divider: c['color.border'],
+    icon: c['color.icon.subtle'],
     shadow:
       theme.mode === 'dark'
         ? '0 0 0 1px #BCD6F01F, 0 8px 12px #0304048F, 0 0 1px #03040480'
@@ -68,3 +86,10 @@ export function nextEnabled(options: MenuOption[], from: number, step: 1 | -1): 
 }
 
 export const firstEnabled = (options: MenuOption[]) => options.findIndex((o) => !o.isDisabled);
+
+/** Section header for item `i`, when it starts a new group. */
+export function groupHeaderAt(options: MenuOption[], i: number): string | null {
+  const g = options[i]?.group;
+  if (!g) return null;
+  return i === 0 || options[i - 1]?.group !== g ? g : null;
+}

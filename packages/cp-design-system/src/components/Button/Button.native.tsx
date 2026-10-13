@@ -22,10 +22,12 @@ export function ButtonBase({
   rel: _rel, // eslint-disable-line @typescript-eslint/no-unused-vars
   hasPopup,
   isExpanded,
+  isCurrent,
   ...input
 }: ButtonBaseProps) {
   const b = useButton({
     ...input,
+    ...(isCurrent ? { isSelected: true } : {}),
     onPress: input.onPress ?? (href ? () => void Linking.openURL(href) : undefined),
   });
   const { props, tokens: t, spring, reduceMotion, interactive } = b;
@@ -93,6 +95,7 @@ export function ButtonBase({
       testID={props.testID}
       accessibilityRole={href ? 'link' : 'button'}
       accessibilityLabel={props.accessibilityLabel}
+      accessibilityHint={props.accessibilityHint}
       accessibilityState={{
         disabled: b.isDisabled || b.isLoading,
         busy: b.isLoading,

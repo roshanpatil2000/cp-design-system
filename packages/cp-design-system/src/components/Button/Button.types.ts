@@ -30,6 +30,8 @@ export interface ButtonProps {
   shouldFitContainer?: boolean;
   iconBefore?: ButtonIcon;
   iconAfter?: ButtonIcon;
+  /** Native: extra spoken help, e.g. what happens on press. Tooltip sets this for you. */
+  accessibilityHint?: string;
   /** Accessible name when the visible label isn't enough (e.g. icon-only content). */
   accessibilityLabel?: string;
   /** Web only. Defaults to `'button'`. */
@@ -51,4 +53,6 @@ export interface ButtonBaseProps extends ButtonProps {
   hasPopup?: 'menu' | 'listbox';
   /** Whether that popup is open. */
   isExpanded?: boolean;
+  /** Marks the current item in a set (e.g. the current page): selected look, `aria-current`. */
+  isCurrent?: boolean;
 }

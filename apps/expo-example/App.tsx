@@ -13,6 +13,14 @@ import * as Haptics from 'expo-haptics';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import {
+  Breadcrumbs,
+  Drawer,
+  DropdownMenu,
+  InlineDialog,
+  Pagination,
+  Popup,
+  Tabs,
+  Tooltip,
   Avatar,
   AvatarGroup,
   Field,
@@ -284,6 +292,123 @@ function ModalDemo() {
         )}
       </Modal>
     </View>
+  );
+}
+
+/** Overlays and navigation components from 0.5.0. */
+function OverlaysNavigationDemo() {
+  const { showFlag } = useFlags();
+  const [popup, setPopup] = useState(false);
+  const [help, setHelp] = useState(false);
+  const [drawer, setDrawer] = useState(false);
+  const [compact, setCompact] = useState(false);
+  const [page, setPage] = useState(0);
+  const theme = useTheme();
+  return (
+    <Stack space="300">
+      <Stack space="150">
+        <DSHeading size="small">Overlays</DSHeading>
+        <Inline space="100" alignBlock="center" shouldWrap>
+          <Popup
+            isOpen={popup}
+            onClose={() => setPopup(false)}
+            label="Filters"
+            testID="popup"
+            trigger={
+              <Button onPress={() => setPopup(true)} testID="open-popup">
+                Filters
+              </Button>
+            }
+            content={
+              <View style={{ padding: 16, gap: 8, width: 220 }}>
+                <Checkbox label="Assigned to me" defaultChecked />
+                <Checkbox label="Unresolved" />
+                <Button appearance="primary" onPress={() => setPopup(false)}>
+                  Apply
+                </Button>
+              </View>
+            }
+          />
+          <DropdownMenu
+            trigger="Actions"
+            testID="dropdown"
+            items={[
+              {
+                label: 'Edit',
+                icon: 'add',
+                onPress: () => showFlag({ title: 'Edit' }),
+                group: 'Issue',
+              },
+              { label: 'Move', description: 'To another project', group: 'Issue' },
+              {
+                label: 'Compact rows',
+                isChecked: compact,
+                onCheckedChange: setCompact,
+                group: 'View',
+              },
+            ]}
+          />
+          <InlineDialog
+            isOpen={help}
+            onClose={() => setHelp(false)}
+            content="Usernames are unique and 3–20 characters long."
+          >
+            <IconButton
+              icon="info"
+              label="About usernames"
+              appearance="subtle"
+              onPress={() => setHelp(true)}
+            />
+          </InlineDialog>
+          <Tooltip content="Long-press for a tooltip">
+            <Button appearance="subtle">Hold me</Button>
+          </Tooltip>
+        </Inline>
+        <Button testID="open-drawer" onPress={() => setDrawer(true)}>
+          Open bottom sheet
+        </Button>
+        <Drawer
+          isOpen={drawer}
+          onClose={() => setDrawer(false)}
+          title="Create issue"
+          testID="drawer"
+        >
+          <View style={{ gap: theme.space['200'] }}>
+            <TextField label="Summary" isRequired />
+            <Button
+              appearance="primary"
+              onPress={() => {
+                setDrawer(false);
+                showFlag({ title: 'Issue created', appearance: 'success' });
+              }}
+            >
+              Create
+            </Button>
+          </View>
+        </Drawer>
+      </Stack>
+
+      <Stack space="150">
+        <DSHeading size="small">Navigation</DSHeading>
+        <Breadcrumbs
+          maxItems={4}
+          items={['Home', 'Spaces', 'Engineering', 'Design system', 'Tabs'].map((label) => ({
+            label,
+            onPress: () => showFlag({ title: label }),
+          }))}
+        />
+        <Tabs
+          testID="tabs"
+          tabs={[
+            { id: 'overview', label: 'Overview', content: 'Project summary, goals and owners.' },
+            { id: 'issues', label: 'Issues', content: '142 open issues across 6 epics.' },
+            { id: 'releases', label: 'Releases', content: 'v2.4 ships next Tuesday.' },
+            { id: 'settings', label: 'Settings', content: 'Permissions and integrations.' },
+          ]}
+        />
+        <Pagination pages={12} selectedIndex={page} onChange={setPage} testID="pages" />
+      </Stack>
+    </Stack>
   );
 }
 
@@ -730,6 +855,11 @@ function Foundations({
           </Button>
         </View>
         <AsyncSaveButton />
+      </View>
+
+      <View style={{ gap: theme.space['150'] }}>
+        <Heading>Overlays and navigation</Heading>
+        <OverlaysNavigationDemo />
       </View>
 
       <View style={{ gap: theme.space['150'] }}>

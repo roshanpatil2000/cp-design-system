@@ -15,6 +15,7 @@ export function IconButton(input: IconButtonProps) {
   return (
     <ButtonBase
       accessibilityLabel={props.label}
+      accessibilityHint={props.accessibilityHint}
       onPress={props.onPress}
       appearance={props.appearance}
       spacing={props.spacing}

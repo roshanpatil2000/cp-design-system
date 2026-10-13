@@ -1,4 +1,4 @@
-import { useEffect, useId, useLayoutEffect, useRef, useState, type RefObject } from 'react';
+import { Fragment, useEffect, useId, useRef, useState, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { useReducedMotion, useTheme } from '../../theme/context';
@@ -6,11 +6,14 @@ import { Icon } from '../Icon/Icon.web';
 import {
   firstEnabled,
   getMenuTokens,
+  groupHeaderAt,
   nextEnabled,
   type MenuOption,
   type MenuTokens,
 } from './menuTokens';
+import type { Placement } from './placement';
 import { systemFontStack } from './portalFont';
+import { useAnchorPosition } from './useAnchorPosition.web';
 
 export interface MenuProps {
   isOpen: boolean;
@@ -26,15 +29,11 @@ export interface MenuProps {
   label?: string;
   /** Align the menu's right edge with the trigger instead of its left. */
   alignEnd?: boolean;
+  placement?: Placement;
+  /** Keep the menu open after choosing an item (checkbox items). */
+  keepOpenOnSelect?: boolean;
   tokens?: Partial<MenuTokens>;
   testID?: string;
-}
-
-interface Position {
-  top: number;
-  left: number;
-  minWidth: number;
-  above: boolean;
 }
 
 /**
@@ -46,11 +45,12 @@ export function Menu(props: MenuProps) {
   const reduceMotion = useReducedMotion();
   const t = { ...getMenuTokens(theme), ...props.tokens };
   const listRef = useRef<HTMLDivElement>(null);
-  const [pos, setPos] = useState<Position | null>(null);
   const [active, setActive] = useState(-1);
   const baseId = useId();
   const typed = useRef({ text: '', at: 0 });
   const { isOpen, onClose, anchorRef, options } = props;
+  const placement = props.placement ?? (props.alignEnd ? 'bottom-end' : 'bottom-start');
+  const pos = useAnchorPosition(isOpen, anchorRef, listRef, placement, t.offset);
 
   const close = (refocus = true) => {
     onClose();
@@ -59,36 +59,6 @@ export function Menu(props: MenuProps) {
     const target = el?.matches('button, a, input, [tabindex]') ? el : el?.querySelector('button');
     (target as HTMLElement | null | undefined)?.focus();
   };
-
-  // Position below the trigger (or above when there's no room), and keep it there on scroll.
-  useLayoutEffect(() => {
-    if (!isOpen) return;
-    const place = () => {
-      const a = anchorRef.current?.getBoundingClientRect();
-      if (!a) return;
-      const h = listRef.current?.offsetHeight ?? 0;
-      const above = a.bottom + t.offset + h > window.innerHeight && a.top - t.offset - h > 0;
-      const width = Math.max(listRef.current?.offsetWidth ?? 0, a.width);
-      const preferred = props.alignEnd ? a.right - width : a.left;
-      // Keep the whole menu on screen, 8px from either edge.
-      const left = Math.max(8, Math.min(preferred, window.innerWidth - width - 8));
-      setPos({
-        top: above ? a.top - t.offset - h : a.bottom + t.offset,
-        left,
-        minWidth: a.width,
-        above,
-      });
-    };
-    place();
-    const raf = requestAnimationFrame(place);
-    window.addEventListener('resize', place);
-    window.addEventListener('scroll', place, true);
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener('resize', place);
-      window.removeEventListener('scroll', place, true);
-    };
-  }, [isOpen, anchorRef, t.offset, props.alignEnd]);
 
   // Start on the selected option (or the first enabled one) and take focus.
   useEffect(() => {
@@ -120,7 +90,8 @@ export function Menu(props: MenuProps) {
     const option = options[index];
     if (!option || option.isDisabled) return;
     props.onSelect(option.value);
-    close();
+    // Checkbox items stay open so several can be toggled.
+    if (!props.keepOpenOnSelect && option.isChecked === undefined) close();
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
@@ -158,6 +129,7 @@ export function Menu(props: MenuProps) {
     ? { duration: 0 }
     : { duration: 0.15, ease: [0.4, 0, 0, 1] as const };
   const listbox = props.role === 'listbox';
+  const above = pos?.side === 'top';
 
   return createPortal(
     <AnimatePresence>
@@ -170,7 +142,7 @@ export function Menu(props: MenuProps) {
           tabIndex={-1}
           data-testid={props.testID}
           onKeyDown={onKeyDown}
-          initial={{ opacity: 0, y: pos?.above ? 4 : -4, scale: 0.98 }}
+          initial={{ opacity: 0, y: above ? 4 : -4, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, transition: reduceMotion ? { duration: 0 } : { duration: 0.1 } }}
           transition={transition}
@@ -179,7 +151,8 @@ export function Menu(props: MenuProps) {
             zIndex: 700,
             top: pos?.top ?? -9999,
             left: pos?.left ?? -9999,
-            minWidth: pos?.minWidth,
+            minWidth: pos?.anchorWidth,
+            maxWidth: 'calc(100vw - 16px)',
             maxHeight: t.maxHeight,
             overflowY: 'auto',
             boxSizing: 'border-box',
@@ -191,51 +164,102 @@ export function Menu(props: MenuProps) {
             fontSize: t.fontSize,
             lineHeight: `${t.lineHeight}px`,
             outline: 'none',
-            transformOrigin: pos?.above ? 'bottom' : 'top',
+            transformOrigin: above ? 'bottom' : 'top',
           }}
         >
           {options.map((o, i) => {
-            const selected = o.value === props.selectedValue;
+            const selected = listbox && o.value === props.selectedValue;
             const isActive = i === active;
+            const checkable = o.isChecked !== undefined;
+            const header = groupHeaderAt(options, i);
             return (
-              <div
-                key={o.value}
-                id={`${baseId}-${i}`}
-                role={listbox ? 'option' : 'menuitem'}
-                aria-selected={listbox ? selected : undefined}
-                aria-disabled={o.isDisabled || undefined}
-                data-active={isActive || undefined}
-                onPointerMove={() => !o.isDisabled && setActive(i)}
-                onClick={() => choose(i)}
-                style={{
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: 12,
-                  padding: `${t.itemPaddingY}px ${t.itemPaddingX}px`,
-                  whiteSpace: 'nowrap',
-                  cursor: o.isDisabled ? 'not-allowed' : 'pointer',
-                  color: o.isDisabled ? t.textDisabled : selected ? t.textSelected : t.text,
-                  background: selected ? t.itemSelected : isActive ? t.itemHovered : 'transparent',
-                }}
-              >
-                {selected && (
-                  <span
-                    aria-hidden
+              <Fragment key={o.value}>
+                {header && (
+                  <div
+                    role="presentation"
                     style={{
-                      position: 'absolute',
-                      left: 0,
-                      top: 0,
-                      bottom: 0,
-                      width: 2,
-                      background: t.selectedBar,
+                      padding: `${i === 0 ? 4 : 12}px ${t.itemPaddingX}px 4px`,
+                      borderTop: i === 0 ? 'none' : `1px solid ${t.divider}`,
+                      marginTop: i === 0 ? 0 : 4,
+                      color: t.groupTitle,
+                      fontSize: 11,
+                      lineHeight: '16px',
+                      fontWeight: 653,
+                      textTransform: 'uppercase',
                     }}
-                  />
+                  >
+                    {header}
+                  </div>
                 )}
-                <span>{o.label}</span>
-                {listbox && selected && <Icon glyph="check" size="small" color={t.textSelected} />}
-              </div>
+                <div
+                  id={`${baseId}-${i}`}
+                  role={listbox ? 'option' : checkable ? 'menuitemcheckbox' : 'menuitem'}
+                  aria-selected={listbox ? selected : undefined}
+                  aria-checked={checkable ? !!o.isChecked : undefined}
+                  aria-disabled={o.isDisabled || undefined}
+                  data-active={isActive || undefined}
+                  onPointerMove={() => !o.isDisabled && setActive(i)}
+                  onClick={() => choose(i)}
+                  style={{
+                    position: 'relative',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: `${t.itemPaddingY}px ${t.itemPaddingX}px`,
+                    cursor: o.isDisabled ? 'not-allowed' : 'pointer',
+                    color: o.isDisabled ? t.textDisabled : selected ? t.textSelected : t.text,
+                    background: selected
+                      ? t.itemSelected
+                      : isActive
+                        ? t.itemHovered
+                        : 'transparent',
+                  }}
+                >
+                  {selected && (
+                    <span
+                      aria-hidden
+                      style={{
+                        position: 'absolute',
+                        left: 0,
+                        top: 0,
+                        bottom: 0,
+                        width: 2,
+                        background: t.selectedBar,
+                      }}
+                    />
+                  )}
+                  {checkable && (
+                    <span style={{ display: 'flex', width: 16, flexShrink: 0 }}>
+                      {o.isChecked && <Icon glyph="check" size="medium" color={t.textSelected} />}
+                    </span>
+                  )}
+                  {o.icon && (
+                    <Icon
+                      glyph={o.icon}
+                      size="medium"
+                      color={o.isDisabled ? t.textDisabled : t.icon}
+                    />
+                  )}
+                  <span style={{ flex: 1, minWidth: 0, whiteSpace: 'nowrap' }}>
+                    {o.label}
+                    {o.description && (
+                      <span
+                        style={{
+                          display: 'block',
+                          color: o.isDisabled ? t.textDisabled : t.description,
+                          fontSize: 12,
+                          lineHeight: '16px',
+                        }}
+                      >
+                        {o.description}
+                      </span>
+                    )}
+                  </span>
+                  {listbox && selected && (
+                    <Icon glyph="check" size="small" color={t.textSelected} />
+                  )}
+                </div>
+              </Fragment>
             );
           })}
         </motion.div>

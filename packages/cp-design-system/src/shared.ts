@@ -115,6 +115,18 @@ export type {
 } from './components/Avatar/Avatar.types';
 export { getAvatarTokens, avatarSizes } from './components/Avatar/Avatar.types';
 export type { AvatarGroupProps, AvatarGroupItem } from './components/AvatarGroup/AvatarGroup.types';
+export type { PopupProps, PopupPlacement, PopupTokens } from './components/Popup/Popup.types';
+export { getPopupTokens } from './components/Popup/Popup.types';
+export type { InlineDialogProps } from './components/InlineDialog/InlineDialog.types';
+export type { TooltipProps, TooltipTokens } from './components/Tooltip/Tooltip.types';
+export type {
+  DropdownMenuProps,
+  DropdownMenuItem,
+} from './components/DropdownMenu/DropdownMenu.types';
+export type { DrawerProps, DrawerWidth, DrawerTokens } from './components/Drawer/Drawer.types';
+export type { TabsProps, TabItem, TabsTokens } from './components/Tabs/Tabs.types';
+export type { BreadcrumbsProps, BreadcrumbItem } from './components/Breadcrumbs/Breadcrumbs.types';
+export type { PaginationProps } from './components/Pagination/Pagination.types';
 export type {
   Theme,
   ThemePair,

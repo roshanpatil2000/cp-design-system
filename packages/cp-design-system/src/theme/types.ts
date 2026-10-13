@@ -38,6 +38,13 @@ import type { RangeProps, RangeTokens } from '../components/Range/Range.types';
 import type { SelectProps } from '../components/Select/Select.types';
 import type { SplitButtonProps } from '../components/SplitButton/SplitButton.types';
 import type { TextAreaProps } from '../components/TextArea/TextArea.types';
+import type { DrawerProps, DrawerTokens } from '../components/Drawer/Drawer.types';
+import type { DropdownMenuProps } from '../components/DropdownMenu/DropdownMenu.types';
+import type { InlineDialogProps } from '../components/InlineDialog/InlineDialog.types';
+import type { PaginationProps } from '../components/Pagination/Pagination.types';
+import type { PopupProps, PopupTokens } from '../components/Popup/Popup.types';
+import type { TabsProps, TabsTokens } from '../components/Tabs/Tabs.types';
+import type { TooltipProps, TooltipTokens } from '../components/Tooltip/Tooltip.types';
 import type { ColorToken } from '../tokens/atlassian/colors.generated';
 import type { atlassianOpacity } from '../tokens/atlassian/colors.generated';
 import type { atlassianSpace } from '../tokens/atlassian/spacing.generated';
@@ -106,6 +113,16 @@ export interface ComponentTheme<Props, Tokens> {
  * as it is built.
  */
 export interface ComponentThemes {
+  Drawer?: ComponentTheme<DrawerProps, DrawerTokens>;
+  /** Only `defaultProps` apply; it uses Button and menu styling. */
+  DropdownMenu?: Pick<ComponentTheme<DropdownMenuProps, never>, 'defaultProps'>;
+  /** Tokens are Popup tokens. */
+  InlineDialog?: ComponentTheme<InlineDialogProps, PopupTokens>;
+  /** Only `defaultProps` apply. */
+  Pagination?: Pick<ComponentTheme<PaginationProps, never>, 'defaultProps'>;
+  Popup?: ComponentTheme<PopupProps, PopupTokens>;
+  Tabs?: ComponentTheme<TabsProps, TabsTokens>;
+  Tooltip?: ComponentTheme<TooltipProps, TooltipTokens>;
   Avatar?: ComponentTheme<AvatarProps, AvatarTokens>;
   /** Only `defaultProps` apply; style the avatars through `Avatar`. */
   AvatarGroup?: Pick<ComponentTheme<AvatarGroupProps, never>, 'defaultProps'>;

@@ -9,6 +9,8 @@ export interface IconButtonProps {
   icon: IconGlyph | ((props: { color: string; size: number }) => ReactNode);
   /** Accessible name. Required: an icon alone doesn't say what the button does. */
   label: string;
+  /** Native: extra spoken help. Tooltip sets this for you. */
+  accessibilityHint?: string;
   onPress?: () => void;
   /** Defaults to `'default'`. */
   appearance?: ButtonAppearance;

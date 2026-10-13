@@ -1,8 +1,6 @@
-import { useEffect, useState, type RefObject } from 'react';
+import { Fragment, useState, type RefObject } from 'react';
 import {
   Modal,
-  Platform,
-  StatusBar,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -13,7 +11,9 @@ import {
 import Animated, { Keyframe } from 'react-native-reanimated';
 import { useReducedMotion, useTheme } from '../../theme/context';
 import { Icon } from '../Icon/Icon.native';
-import { getMenuTokens, type MenuOption, type MenuTokens } from './menuTokens';
+import { getMenuTokens, groupHeaderAt, type MenuOption, type MenuTokens } from './menuTokens';
+import { placeFloating, type Placement } from './placement';
+import { useAnchorRect } from './useAnchorRect.native';
 
 export interface MenuProps {
   isOpen: boolean;
@@ -25,15 +25,10 @@ export interface MenuProps {
   selectedValue?: string | null;
   label?: string;
   alignEnd?: boolean;
+  placement?: Placement;
+  keepOpenOnSelect?: boolean;
   tokens?: Partial<MenuTokens>;
   testID?: string;
-}
-
-interface Rect {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
 }
 
 const dropIn = new Keyframe({
@@ -50,36 +45,23 @@ export function Menu(props: MenuProps) {
   const reduceMotion = useReducedMotion();
   const t = { ...getMenuTokens(theme), ...props.tokens };
   const window = useWindowDimensions();
-  const [anchor, setAnchor] = useState<Rect | null>(null);
-  const [menuHeight, setMenuHeight] = useState(0);
-  const [menuWidth, setMenuWidth] = useState(0);
-  const { isOpen, anchorRef } = props;
-
-  useEffect(() => {
-    if (!isOpen) {
-      setAnchor(null);
-      return;
-    }
-    anchorRef.current?.measureInWindow((x, y, width, height) => {
-      // Android measures below the status bar, but the translucent Modal starts above it.
-      const offset = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0;
-      setAnchor({ x, y: y + offset, width, height });
-    });
-  }, [isOpen, anchorRef]);
-
-  const below = anchor ? anchor.y + anchor.height + t.offset : 0;
-  const above =
-    anchor &&
-    menuHeight > 0 &&
-    below + menuHeight > window.height - 16 &&
-    anchor.y - menuHeight > 16;
-  const top = anchor ? (above ? anchor.y - t.offset - menuHeight : below) : 0;
-  const width = anchor?.width ?? 0;
+  const anchor = useAnchorRect(props.isOpen, props.anchorRef);
+  const [size, setSize] = useState({ width: 0, height: 0 });
   const listbox = props.role === 'listbox';
+  const placement = props.placement ?? (props.alignEnd ? 'bottom-end' : 'bottom-start');
+  const pos = anchor
+    ? placeFloating(
+        anchor,
+        { width: Math.max(size.width, anchor.width), height: size.height },
+        window,
+        placement,
+        t.offset,
+      )
+    : null;
 
   return (
     <Modal
-      visible={isOpen}
+      visible={props.isOpen}
       transparent
       animationType="none"
       statusBarTranslucent
@@ -91,24 +73,21 @@ export function Menu(props: MenuProps) {
         testID={props.testID && `${props.testID}-backdrop`}
         onPress={props.onClose}
       />
-      {anchor ? (
+      {anchor && pos ? (
         <Animated.View
           testID={props.testID}
           accessibilityRole={listbox ? 'list' : 'menu'}
           accessibilityLabel={props.label}
           entering={reduceMotion ? undefined : dropIn}
-          onLayout={(e) => {
-            setMenuHeight(e.nativeEvent.layout.height);
-            setMenuWidth(e.nativeEvent.layout.width);
-          }}
+          onLayout={(e) =>
+            setSize({ width: e.nativeEvent.layout.width, height: e.nativeEvent.layout.height })
+          }
           style={{
             position: 'absolute',
-            top,
-            ...(props.alignEnd && anchor && anchor.x + anchor.width > menuWidth + 8
-              ? { right: Math.max(8, window.width - anchor.x - anchor.width) }
-              : { left: Math.max(8, Math.min(anchor?.x ?? 0, window.width - menuWidth - 8)) }),
-            minWidth: width,
-            maxWidth: window.width - 32,
+            top: pos.top,
+            left: pos.left,
+            minWidth: anchor.width,
+            maxWidth: window.width - 16,
             maxHeight: t.maxHeight,
             paddingVertical: t.paddingY,
             borderRadius: t.radius,
@@ -121,62 +100,119 @@ export function Menu(props: MenuProps) {
           }}
         >
           <ScrollView bounces={false}>
-            {props.options.map((o) => {
-              const selected = o.value === props.selectedValue;
+            {props.options.map((o, i) => {
+              const selected = listbox && o.value === props.selectedValue;
+              const checkable = o.isChecked !== undefined;
+              const header = groupHeaderAt(props.options, i);
+              const color = o.isDisabled ? t.textDisabled : selected ? t.textSelected : t.text;
               return (
-                <Pressable
-                  key={o.value}
-                  accessibilityRole="menuitem"
-                  accessibilityLabel={o.label}
-                  accessibilityState={{ selected, disabled: !!o.isDisabled }}
-                  disabled={o.isDisabled}
-                  testID={props.testID && `${props.testID}-${o.value}`}
-                  onPress={() => {
-                    props.onSelect(o.value);
-                    props.onClose();
-                  }}
-                  style={({ pressed }) => ({
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: 12,
-                    minHeight: 44,
-                    paddingHorizontal: t.itemPaddingX,
-                    paddingVertical: t.itemPaddingY,
-                    backgroundColor: selected
-                      ? t.itemSelected
-                      : pressed
-                        ? t.itemPressed
-                        : 'transparent',
-                  })}
-                >
-                  {selected ? (
-                    <View
+                <Fragment key={o.value}>
+                  {header ? (
+                    <Text
+                      accessibilityRole="header"
                       style={{
-                        position: 'absolute',
-                        left: 0,
-                        top: 0,
-                        bottom: 0,
-                        width: 2,
-                        backgroundColor: t.selectedBar,
+                        paddingHorizontal: t.itemPaddingX,
+                        paddingTop: i === 0 ? 4 : 12,
+                        paddingBottom: 4,
+                        marginTop: i === 0 ? 0 : 4,
+                        borderTopWidth: i === 0 ? 0 : 1,
+                        borderTopColor: t.divider,
+                        color: t.groupTitle,
+                        fontSize: 11,
+                        lineHeight: 16,
+                        fontWeight: '700',
+                        textTransform: 'uppercase',
                       }}
-                    />
+                    >
+                      {header}
+                    </Text>
                   ) : null}
-                  <Text
-                    style={{
-                      flexShrink: 1,
-                      color: o.isDisabled ? t.textDisabled : selected ? t.textSelected : t.text,
-                      fontSize: t.fontSize,
-                      lineHeight: t.lineHeight,
-                      fontFamily: t.fontFamily,
+                  <Pressable
+                    accessibilityRole={checkable ? 'checkbox' : 'menuitem'}
+                    accessibilityLabel={o.label}
+                    accessibilityHint={o.description}
+                    accessibilityState={{
+                      selected,
+                      disabled: !!o.isDisabled,
+                      checked: checkable ? !!o.isChecked : undefined,
                     }}
+                    disabled={o.isDisabled}
+                    testID={props.testID && `${props.testID}-${o.value}`}
+                    onPress={() => {
+                      props.onSelect(o.value);
+                      if (!props.keepOpenOnSelect && !checkable) props.onClose();
+                    }}
+                    style={({ pressed }) => ({
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 8,
+                      minHeight: 44,
+                      paddingHorizontal: t.itemPaddingX,
+                      paddingVertical: t.itemPaddingY,
+                      backgroundColor: selected
+                        ? t.itemSelected
+                        : pressed
+                          ? t.itemPressed
+                          : 'transparent',
+                    })}
                   >
-                    {o.label}
-                  </Text>
-                  {listbox && selected ? (
-                    <Icon glyph="check" size="small" color={t.textSelected} />
-                  ) : null}
-                </Pressable>
+                    {selected ? (
+                      <View
+                        style={{
+                          position: 'absolute',
+                          left: 0,
+                          top: 0,
+                          bottom: 0,
+                          width: 2,
+                          backgroundColor: t.selectedBar,
+                        }}
+                      />
+                    ) : null}
+                    {checkable ? (
+                      <View style={{ width: 16 }}>
+                        {o.isChecked ? (
+                          <Icon glyph="check" size="medium" color={t.textSelected} />
+                        ) : null}
+                      </View>
+                    ) : null}
+                    {o.icon ? (
+                      <Icon
+                        glyph={o.icon}
+                        size="medium"
+                        color={o.isDisabled ? t.textDisabled : t.icon}
+                      />
+                    ) : null}
+                    <View style={{ flexShrink: 1 }}>
+                      <Text
+                        style={{
+                          color,
+                          fontSize: t.fontSize,
+                          lineHeight: t.lineHeight,
+                          fontFamily: t.fontFamily,
+                        }}
+                      >
+                        {o.label}
+                      </Text>
+                      {o.description ? (
+                        <Text
+                          style={{
+                            color: o.isDisabled ? t.textDisabled : t.description,
+                            fontSize: 12,
+                            lineHeight: 16,
+                            fontFamily: t.fontFamily,
+                          }}
+                        >
+                          {o.description}
+                        </Text>
+                      ) : null}
+                    </View>
+                    {listbox && selected ? (
+                      <View style={{ marginLeft: 'auto' }}>
+                        <Icon glyph="check" size="small" color={t.textSelected} />
+                      </View>
+                    ) : null}
+                  </Pressable>
+                </Fragment>
               );
             })}
           </ScrollView>

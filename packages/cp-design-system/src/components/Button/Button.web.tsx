@@ -12,7 +12,7 @@ export function Button(props: ButtonProps) {
 
 /** Internal: Button that can also render as a link. */
 export function ButtonBase(input: ButtonBaseProps) {
-  const b = useButton(input);
+  const b = useButton(input.isCurrent ? { ...input, isSelected: true } : input);
   const { props, tokens: t, spring, reduceMotion, theme, interactive } = b;
   const [hovered, setHovered] = useState(false);
   const [pressed, setPressed] = useState(false);
@@ -58,7 +58,9 @@ export function ButtonBase(input: ButtonBaseProps) {
       {...(elementProps as object)}
       data-testid={props.testID}
       aria-label={props.accessibilityLabel}
-      aria-pressed={props.isSelected === undefined ? undefined : b.isSelected}
+      aria-describedby={(input as { 'aria-describedby'?: string })['aria-describedby']}
+      aria-pressed={props.isSelected === undefined || input.isCurrent ? undefined : b.isSelected}
+      aria-current={input.isCurrent ? 'page' : undefined}
       aria-busy={b.isLoading || undefined}
       aria-haspopup={input.hasPopup}
       aria-expanded={input.hasPopup ? !!input.isExpanded : undefined}

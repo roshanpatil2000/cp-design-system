@@ -12,6 +12,7 @@ import Animated, { Easing, useAnimatedStyle, useSharedValue } from 'react-native
 import { fontWeightFor } from '../../theme/createTheme';
 import { runOnJS, timeTo } from '../../motion/worklet.native';
 import type { Bezier } from '../../tokens/atlassian/motion.generated';
+import { FlagOutlet } from '../Flag/Flag.native';
 import { StatusIcon } from '../internal/StatusIcon.native';
 import type { ModalProps } from './Modal.types';
 import { useModal } from './useModal';
@@ -180,6 +181,7 @@ export function Modal(input: ModalProps) {
           )}
         </Animated.View>
       </View>
+      <FlagOutlet />
     </RNModal>
   );
 }

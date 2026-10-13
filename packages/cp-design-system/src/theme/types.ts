@@ -30,6 +30,14 @@ import type { SkeletonProps } from '../components/Skeleton/Skeleton.types';
 import type { SkeletonTokens } from '../components/Skeleton/Skeleton.types';
 import type { TagProps } from '../components/Tag/Tag.types';
 import type { TagTokens } from '../components/Tag/Tag.types';
+import type { AvatarProps, AvatarTokens } from '../components/Avatar/Avatar.types';
+import type { AvatarGroupProps } from '../components/AvatarGroup/AvatarGroup.types';
+import type { IconButtonProps } from '../components/IconButton/IconButton.types';
+import type { LinkButtonProps } from '../components/LinkButton/LinkButton.types';
+import type { RangeProps, RangeTokens } from '../components/Range/Range.types';
+import type { SelectProps } from '../components/Select/Select.types';
+import type { SplitButtonProps } from '../components/SplitButton/SplitButton.types';
+import type { TextAreaProps } from '../components/TextArea/TextArea.types';
 import type { ColorToken } from '../tokens/atlassian/colors.generated';
 import type { atlassianOpacity } from '../tokens/atlassian/colors.generated';
 import type { atlassianSpace } from '../tokens/atlassian/spacing.generated';
@@ -98,6 +106,20 @@ export interface ComponentTheme<Props, Tokens> {
  * as it is built.
  */
 export interface ComponentThemes {
+  Avatar?: ComponentTheme<AvatarProps, AvatarTokens>;
+  /** Only `defaultProps` apply; style the avatars through `Avatar`. */
+  AvatarGroup?: Pick<ComponentTheme<AvatarGroupProps, never>, 'defaultProps'>;
+  /** Tokens are Button tokens. */
+  IconButton?: ComponentTheme<IconButtonProps, ButtonTokens>;
+  /** Only `defaultProps` apply; it uses the Button tokens. */
+  LinkButton?: Pick<ComponentTheme<LinkButtonProps, never>, 'defaultProps'>;
+  Range?: ComponentTheme<RangeProps, RangeTokens>;
+  /** Tokens are TextField tokens, for the trigger. */
+  Select?: ComponentTheme<SelectProps, TextFieldTokens>;
+  /** Only `defaultProps` apply; it uses the Button tokens. */
+  SplitButton?: Pick<ComponentTheme<SplitButtonProps, never>, 'defaultProps'>;
+  /** Tokens are TextField tokens. */
+  TextArea?: ComponentTheme<TextAreaProps, TextFieldTokens>;
   Badge?: ComponentTheme<BadgeProps, BadgeTokens>;
   Banner?: ComponentTheme<BannerProps, BannerTokens>;
   EmptyState?: ComponentTheme<EmptyStateProps, Record<string, never>>;

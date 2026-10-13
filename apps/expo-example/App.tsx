@@ -13,6 +13,15 @@ import * as Haptics from 'expo-haptics';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import {
+  Avatar,
+  AvatarGroup,
+  Field,
+  IconButton,
+  LinkButton,
+  Range,
+  Select,
+  SplitButton,
+  TextArea,
   Badge,
   Banner,
   Box,
@@ -275,6 +284,104 @@ function ModalDemo() {
         )}
       </Modal>
     </View>
+  );
+}
+
+/** Actions, forms and people components from 0.5.0. */
+function ActionsFormsPeopleDemo() {
+  const { showFlag } = useFlags();
+  const [plan, setPlan] = useState<string | null>(null);
+  const [volume, setVolume] = useState(40);
+  const team = [
+    'Ada Lovelace',
+    'Grace Hopper',
+    'Alan Turing',
+    'Margaret Hamilton',
+    'Linus Torvalds',
+    'Katherine Johnson',
+    'Dennis Ritchie',
+  ];
+  return (
+    <Stack space="300">
+      <Stack space="150">
+        <DSHeading size="small">Actions</DSHeading>
+        <Inline space="100" alignBlock="center">
+          <IconButton
+            icon="add"
+            label="Add"
+            appearance="primary"
+            testID="icon-add"
+            onPress={() => showFlag({ title: 'Added', appearance: 'success' })}
+          />
+          <IconButton icon="cross" label="Close" />
+          <IconButton icon="chevron-right" label="Next" shape="circle" />
+          <IconButton icon="check" label="Done" appearance="subtle" />
+        </Inline>
+        <Inline space="100" alignBlock="center" shouldWrap>
+          <SplitButton
+            appearance="primary"
+            testID="split"
+            onPress={() => showFlag({ title: 'Published', appearance: 'success' })}
+            items={[
+              { label: 'Save as draft', onPress: () => showFlag({ title: 'Saved as draft' }) },
+              {
+                label: 'Schedule…',
+                onPress: () => showFlag({ title: 'Scheduled', appearance: 'info' }),
+              },
+              { label: 'Delete', onPress: () => {}, isDisabled: true },
+            ]}
+          >
+            Publish
+          </SplitButton>
+          <LinkButton href="https://atlassian.design">Atlassian Design</LinkButton>
+        </Inline>
+      </Stack>
+
+      <Stack space="150">
+        <DSHeading size="small">Forms</DSHeading>
+        <Select
+          label="Plan"
+          testID="plan-select"
+          isRequired
+          value={plan}
+          onChange={setPlan}
+          isInvalid={!plan}
+          errorMessage="Choose a plan"
+          validMessage={plan ? 'Nice choice' : undefined}
+          options={[
+            { value: 'free', label: 'Free' },
+            { value: 'standard', label: 'Standard' },
+            { value: 'premium', label: 'Premium' },
+            { value: 'enterprise', label: 'Enterprise', isDisabled: true },
+          ]}
+        />
+        <TextArea label="About you" placeholder="A few words…" maxCharacters={120} testID="bio" />
+        <Field label={`Volume: ${volume}%`}>
+          <Range
+            label="Volume"
+            value={volume}
+            onChange={setVolume}
+            testID="volume"
+            formatValue={(v) => `${v}%`}
+          />
+        </Field>
+      </Stack>
+
+      <Stack space="150">
+        <DSHeading size="small">People</DSHeading>
+        <Inline space="150" alignBlock="center">
+          <Avatar name="Ada Lovelace" size="large" presence="online" />
+          <Avatar name="Alan Turing" size="large" presence="busy" />
+          <Avatar name="Design team" size="large" appearance="square" />
+          <Avatar
+            name="Grace Hopper"
+            size="large"
+            onPress={() => showFlag({ title: 'Grace Hopper' })}
+          />
+        </Inline>
+        <AvatarGroup data={team.map((name) => ({ name }))} size="large" testID="team" />
+      </Stack>
+    </Stack>
   );
 }
 
@@ -623,6 +730,11 @@ function Foundations({
           </Button>
         </View>
         <AsyncSaveButton />
+      </View>
+
+      <View style={{ gap: theme.space['150'] }}>
+        <Heading>Actions, forms and people</Heading>
+        <ActionsFormsPeopleDemo />
       </View>
 
       <View style={{ gap: theme.space['150'] }}>

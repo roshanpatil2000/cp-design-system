@@ -138,11 +138,10 @@ import { atlassianLightColors, atlassianSpace, atlassianEasings } from 'cp-desig
 
 Each component is built and tested on both platforms before release.
 
-| Status        | Component                                                                                                                                                                                                                  |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Ready (0.3.0) | [Button](#button), [Toggle](#toggle), [Text field](#text-field), [Checkbox](#checkbox), [Radio group](#radio-group), [Flag](#flag-toast), [Modal dialog](#modal-dialog)                                                    |
-| Next release  | Building blocks: [Box, Stack, Inline, Text, Heading, Icon, Pressable](#building-blocks). Feedback: [Spinner, ProgressBar, ProgressIndicator, Lozenge, Badge, Tag, Banner, SectionMessage, Skeleton, EmptyState](#feedback) |
-| Planned       | Select, TextArea, Tooltip, Popup, Drawer, Dropdown menu, Tabs, Avatar and more                                                                                                                                             |
+| Status        | Component                                                                                                                                                                                                                                                  |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ready (0.4.0) | [Button](#button), [Toggle](#toggle), [Text field](#text-field), [Checkbox](#checkbox), [Radio group](#radio-group), [Flag](#flag-toast), [Modal dialog](#modal-dialog), plus all [building blocks](#building-blocks) and [feedback](#feedback) components |
+| Planned       | Select, TextArea, Tooltip, Popup, Drawer, Dropdown menu, Tabs, Avatar and more                                                                                                                                                                             |
 
 ### Text field
 

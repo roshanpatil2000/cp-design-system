@@ -99,6 +99,22 @@ export type {
 } from './components/SectionMessage/SectionMessage.types';
 export type { SkeletonProps, SkeletonTokens } from './components/Skeleton/Skeleton.types';
 export type { EmptyStateProps } from './components/EmptyState/EmptyState.types';
+export type { IconButtonProps } from './components/IconButton/IconButton.types';
+export type { LinkButtonProps } from './components/LinkButton/LinkButton.types';
+export type { SplitButtonProps, SplitButtonItem } from './components/SplitButton/SplitButton.types';
+export type { FieldProps, FieldControlProps } from './components/Field/Field.types';
+export type { TextAreaProps } from './components/TextArea/TextArea.types';
+export type { SelectProps, SelectOption } from './components/Select/Select.types';
+export type { RangeProps, RangeTokens } from './components/Range/Range.types';
+export { getRangeTokens } from './components/Range/Range.types';
+export type {
+  AvatarProps,
+  AvatarSize,
+  AvatarPresence,
+  AvatarTokens,
+} from './components/Avatar/Avatar.types';
+export { getAvatarTokens, avatarSizes } from './components/Avatar/Avatar.types';
+export type { AvatarGroupProps, AvatarGroupItem } from './components/AvatarGroup/AvatarGroup.types';
 export type {
   Theme,
   ThemePair,

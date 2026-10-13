@@ -1,17 +1,33 @@
 import { useEffect, type ReactNode } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Linking, Pressable, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { fontWeightFor } from '../../theme/createTheme';
 import { mixColors, springTo } from '../../motion/worklet.native';
 import { Spinner } from '../Spinner/Spinner.native';
-import type { ButtonProps } from './Button.types';
+import type { ButtonBaseProps, ButtonProps } from './Button.types';
 import { useButton } from './useButton';
 
 /** Minimum touch target (pt), reached with hit slop so the visual size stays Atlassian's. */
 const MIN_TARGET = 44;
 
-export function Button(input: ButtonProps) {
-  const b = useButton(input);
+export function Button(props: ButtonProps) {
+  return <ButtonBase {...props} />;
+}
+
+/** Internal: Button that can also act as a link (opens `href` when there's no `onPress`). */
+export function ButtonBase({
+  href,
+  // Web-only link attributes; native opens the URL itself.
+  target: _target, // eslint-disable-line @typescript-eslint/no-unused-vars
+  rel: _rel, // eslint-disable-line @typescript-eslint/no-unused-vars
+  hasPopup,
+  isExpanded,
+  ...input
+}: ButtonBaseProps) {
+  const b = useButton({
+    ...input,
+    onPress: input.onPress ?? (href ? () => void Linking.openURL(href) : undefined),
+  });
   const { props, tokens: t, spring, reduceMotion, interactive } = b;
 
   // 0 = released, 1 = pressed. Drives both the pressed color and the scale.
@@ -75,12 +91,13 @@ export function Button(input: ButtonProps) {
   return (
     <Pressable
       testID={props.testID}
-      accessibilityRole="button"
+      accessibilityRole={href ? 'link' : 'button'}
       accessibilityLabel={props.accessibilityLabel}
       accessibilityState={{
         disabled: b.isDisabled || b.isLoading,
         busy: b.isLoading,
         selected: props.isSelected === undefined ? undefined : b.isSelected,
+        expanded: hasPopup ? !!isExpanded : undefined,
       }}
       disabled={!interactive}
       hitSlop={{ top: slop, bottom: slop }}

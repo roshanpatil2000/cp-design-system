@@ -141,7 +141,8 @@ Each component is built and tested on both platforms before release.
 | Status        | Component                                                                                                                                                                                                                                                  |
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Ready (0.4.0) | [Button](#button), [Toggle](#toggle), [Text field](#text-field), [Checkbox](#checkbox), [Radio group](#radio-group), [Flag](#flag-toast), [Modal dialog](#modal-dialog), plus all [building blocks](#building-blocks) and [feedback](#feedback) components |
-| Planned       | Select, TextArea, Tooltip, Popup, Drawer, Dropdown menu, Tabs, Avatar and more                                                                                                                                                                             |
+| Next release  | Actions: [IconButton, LinkButton, SplitButton](#actions). Forms: [Select, TextArea, Range, Field](#more-form-fields). People: [Avatar, AvatarGroup](#people)                                                                                               |
+| Planned       | Overlays (Popup, Tooltip, Drawer, Dropdown menu, Inline dialog) and Navigation (Tabs, Breadcrumbs, Pagination)                                                                                                                                             |
 
 ### Text field
 
@@ -500,6 +501,79 @@ import { Badge, Banner, EmptyState, Lozenge, ProgressBar, SectionMessage, Skelet
 | `EmptyState`        | Image, header, description and actions for empty screens; rises in on mount                                                                         |
 
 Each one has a theme key under `components` (for example `components.Badge`) for default props, tokens and motion, plus per-instance `tokens` and `motion` props, as for every component.
+
+### Actions
+
+```tsx
+import { IconButton, LinkButton, SplitButton } from 'cp-design-system';
+
+<IconButton icon="cross" label="Close" onPress={close} />
+<IconButton icon="add" label="New issue" appearance="primary" shape="circle" />
+
+<LinkButton href="https://atlassian.design" target="_blank">Read the guidelines</LinkButton>
+
+<SplitButton
+  appearance="primary"
+  onPress={publish}
+  items={[
+    { label: 'Save as draft', onPress: saveDraft },
+    { label: 'Schedule…', onPress: schedule },
+  ]}
+>
+  Publish
+</SplitButton>
+```
+
+| Component     | Highlights                                                                                                                                     |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `IconButton`  | Any built-in glyph or your own icon, with a required `label`. Square or `shape="circle"`, default 32px or compact 24px, all Button appearances |
+| `LinkButton`  | Looks like a Button, works like a link: a real `<a href>` on web (new tab, crawlers), and opens the URL on native                              |
+| `SplitButton` | A main action joined to a dropdown of related actions; the menu is keyboard driven on web (arrows, Enter, Escape, typeahead)                   |
+
+### More form fields
+
+```tsx
+import { Field, Range, Select, TextArea } from 'cp-design-system';
+
+<Select
+  label="Plan"
+  options={[
+    { value: 'free', label: 'Free' },
+    { value: 'pro', label: 'Pro' },
+  ]}
+  value={plan}
+  onChange={setPlan}
+  isInvalid={!plan}
+  errorMessage="Choose a plan"
+/>
+
+<TextArea label="Description" maxCharacters={280} helperMessage="Grows as you type" />
+
+<Field label={`Volume: ${volume}%`}>
+  <Range label="Volume" value={volume} onChange={setVolume} />
+</Field>
+```
+
+| Component  | Highlights                                                                                                                                                                                    |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Select`   | A TextField-style trigger that opens a list. The list flips above when there's no room and supports keyboard and typeahead on web; `name` submits the value with forms. Uses TextField tokens |
+| `TextArea` | Multi-line TextField that grows between `minimumRows` and `maxHeight`, with an optional remaining-characters counter and the same label and messages                                          |
+| `Range`    | A slider: drag, tap the track, or use arrows, Page Up/Down, Home and End. On native the drag runs on the UI thread, and screen readers can adjust it. `min`, `max`, `step`, `formatValue`     |
+| `Field`    | Label, required marker and animated helper/error/valid message around any control. Pass a function child to get the ids that link them for screen readers                                     |
+
+### People
+
+```tsx
+import { Avatar, AvatarGroup } from 'cp-design-system';
+
+<Avatar name="Ada Lovelace" src={photoUrl} presence="online" size="large" />
+<AvatarGroup data={team.map((p) => ({ name: p.name, src: p.photo }))} maxCount={5} />
+```
+
+| Component     | Highlights                                                                                                                                                                |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Avatar`      | Sizes 16 to 128. Shows colored initials (the same color for a name everywhere) until the image loads, and if it fails. Presence dot, `square` for projects, and `onPress` |
+| `AvatarGroup` | Overlapping stack or grid. Stacked avatars lift on hover; the "+N" button expands the group with a staggered pop (or calls `onMorePress`)                                 |
 
 ## License
 

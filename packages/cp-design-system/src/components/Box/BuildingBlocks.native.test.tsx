@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { StyleSheet, Text as RNText } from 'react-native';
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { getAnimatedStyle } from 'react-native-reanimated';
 import {
   Box,
@@ -122,6 +122,8 @@ describe('Pressable (native)', () => {
       ),
     );
     await fireEvent(screen.getByRole('button', { name: 'Row' }), 'pressIn');
-    expect(getAnimatedStyle(screen.getByTestId('p-surface')).backgroundColor).toBe('#123456');
+    await waitFor(() =>
+      expect(getAnimatedStyle(screen.getByTestId('p-surface')).backgroundColor).toBe('#123456'),
+    );
   });
 });

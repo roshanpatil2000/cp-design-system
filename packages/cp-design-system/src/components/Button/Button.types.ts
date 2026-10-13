@@ -14,7 +14,7 @@ export type ButtonIcon = ReactNode | ((props: { color: string; size: number }) =
 
 export interface ButtonProps {
   /** The label. Plain text is styled for you; any other node is rendered as is. */
-  children: ReactNode;
+  children?: ReactNode;
   /** Called on click (web), tap (native) and Enter/Space. Not called while disabled or loading. */
   onPress?: () => void;
   /** Defaults to `'default'`. */
@@ -39,4 +39,16 @@ export interface ButtonProps {
   /** Spring for the press animation, or `false` for none. Defaults to the theme's `snappy`. */
   motion?: MotionOverride;
   testID?: string;
+}
+
+/** Internal: Button plus link rendering, shared by Button, LinkButton and IconButton. */
+export interface ButtonBaseProps extends ButtonProps {
+  /** Renders a link (`<a>` on web; opens the URL on native when there's no `onPress`). */
+  href?: string;
+  target?: string;
+  rel?: string;
+  /** The button opens a popup of this kind (menu triggers, Select). */
+  hasPopup?: 'menu' | 'listbox';
+  /** Whether that popup is open. */
+  isExpanded?: boolean;
 }

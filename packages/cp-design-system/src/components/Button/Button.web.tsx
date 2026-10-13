@@ -1,12 +1,17 @@
 import { useState, type KeyboardEvent } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Spinner } from '../Spinner/Spinner.web';
-import type { ButtonProps } from './Button.types';
+import type { ButtonBaseProps, ButtonProps } from './Button.types';
 import { useButton } from './useButton';
 
 const isActivationKey = (e: KeyboardEvent) => e.key === ' ' || e.key === 'Enter';
 
-export function Button(input: ButtonProps) {
+export function Button(props: ButtonProps) {
+  return <ButtonBase {...props} />;
+}
+
+/** Internal: Button that can also render as a link. */
+export function ButtonBase(input: ButtonBaseProps) {
   const b = useButton(input);
   const { props, tokens: t, spring, reduceMotion, theme, interactive } = b;
   const [hovered, setHovered] = useState(false);
@@ -31,16 +36,32 @@ export function Button(input: ButtonProps) {
 
   const release = () => setPressed(false);
 
+  const href = input.href;
+  const El = (href ? motion.a : motion.button) as typeof motion.button;
+  const elementProps = href
+    ? {
+        href: b.isDisabled ? undefined : href,
+        target: input.target,
+        rel: input.rel ?? (input.target === '_blank' ? 'noopener noreferrer' : undefined),
+        role: b.isDisabled ? 'link' : undefined,
+        'aria-disabled': b.isDisabled || b.isLoading || undefined,
+      }
+    : {
+        type: props.type ?? 'button',
+        disabled: b.isDisabled,
+        // Loading buttons stay focusable (so focus isn't lost mid-action) but announce as disabled.
+        'aria-disabled': b.isLoading || undefined,
+      };
+
   return (
-    <motion.button
-      type={props.type ?? 'button'}
+    <El
+      {...(elementProps as object)}
       data-testid={props.testID}
       aria-label={props.accessibilityLabel}
       aria-pressed={props.isSelected === undefined ? undefined : b.isSelected}
       aria-busy={b.isLoading || undefined}
-      // Loading buttons stay focusable (so focus isn't lost mid-action) but announce as disabled.
-      aria-disabled={b.isLoading || undefined}
-      disabled={b.isDisabled}
+      aria-haspopup={input.hasPopup}
+      aria-expanded={input.hasPopup ? !!input.isExpanded : undefined}
       initial={false}
       animate={{
         backgroundColor: background,
@@ -55,6 +76,7 @@ export function Button(input: ButtonProps) {
           e.preventDefault();
           return;
         }
+        if (href && !input.onPress) return;
         b.press();
       }}
       onPointerEnter={() => setHovered(true)}
@@ -102,6 +124,7 @@ export function Button(input: ButtonProps) {
         outlineOffset: t.focusRingGap,
         WebkitTapHighlightColor: 'transparent',
         userSelect: 'none',
+        textDecoration: 'none',
       }}
     >
       <motion.span
@@ -121,9 +144,11 @@ export function Button(input: ButtonProps) {
             {b.renderIcon(props.iconBefore)}
           </span>
         )}
-        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>
-          {props.children}
-        </span>
+        {props.children != null && (
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>
+            {props.children}
+          </span>
+        )}
         {props.iconAfter && (
           <span data-part="icon-after" style={{ display: 'inline-flex', flexShrink: 0 }}>
             {b.renderIcon(props.iconAfter)}
@@ -155,6 +180,6 @@ export function Button(input: ButtonProps) {
           </motion.span>
         )}
       </AnimatePresence>
-    </motion.button>
+    </El>
   );
 }

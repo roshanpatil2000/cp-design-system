@@ -127,6 +127,8 @@ export type { DrawerProps, DrawerWidth, DrawerTokens } from './components/Drawer
 export type { TabsProps, TabItem, TabsTokens } from './components/Tabs/Tabs.types';
 export type { BreadcrumbsProps, BreadcrumbItem } from './components/Breadcrumbs/Breadcrumbs.types';
 export type { PaginationProps } from './components/Pagination/Pagination.types';
+export type { CarouselProps, CarouselTokens } from './components/Carousel/Carousel.types';
+export { getCarouselTokens } from './components/Carousel/Carousel.types';
 export type {
   Theme,
   ThemePair,

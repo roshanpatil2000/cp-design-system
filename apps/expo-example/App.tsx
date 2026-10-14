@@ -14,6 +14,7 @@ import * as Haptics from 'expo-haptics';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import {
+  Carousel,
   Breadcrumbs,
   Drawer,
   DropdownMenu,
@@ -408,6 +409,26 @@ function OverlaysNavigationDemo() {
           ]}
         />
         <Pagination pages={12} selectedIndex={page} onChange={setPage} testID="pages" />
+        <DSHeading size="small">Carousel</DSHeading>
+        <Carousel label="Projects" slideWidth="82%" testID="carousel">
+          {[
+            ['Design system', 'color.background.accent.purple.subtler'],
+            ['Mobile app', 'color.background.accent.blue.subtler'],
+            ['Billing', 'color.background.accent.yellow.subtler'],
+            ['Onboarding', 'color.background.accent.green.subtler'],
+          ].map(([name, color]) => (
+            <Box
+              key={name}
+              padding="300"
+              backgroundColor={color as 'color.background.accent.purple.subtler'}
+              borderRadius="xlarge"
+              style={{ height: 140 }}
+            >
+              <DSHeading size="medium">{name}</DSHeading>
+              <DSText color="color.text.subtle">Swipe to see the next project.</DSText>
+            </Box>
+          ))}
+        </Carousel>
       </Stack>
     </Stack>
   );

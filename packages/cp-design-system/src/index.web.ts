@@ -7,6 +7,7 @@ export { Banner } from './components/Banner/Banner.web';
 export { Box } from './components/Box/Box.web';
 export { Breadcrumbs } from './components/Breadcrumbs/Breadcrumbs.web';
 export { Button } from './components/Button/Button.web';
+export { Carousel } from './components/Carousel/Carousel.web';
 export { Checkbox } from './components/Checkbox/Checkbox.web';
 export { Drawer } from './components/Drawer/Drawer.web';
 export { DropdownMenu } from './components/DropdownMenu/DropdownMenu.web';

@@ -7,6 +7,7 @@ export { Banner } from './components/Banner/Banner.native';
 export { Box } from './components/Box/Box.native';
 export { Breadcrumbs } from './components/Breadcrumbs/Breadcrumbs.native';
 export { Button } from './components/Button/Button.native';
+export { Carousel } from './components/Carousel/Carousel.native';
 export { Checkbox } from './components/Checkbox/Checkbox.native';
 export { Drawer } from './components/Drawer/Drawer.native';
 export { DropdownMenu } from './components/DropdownMenu/DropdownMenu.native';

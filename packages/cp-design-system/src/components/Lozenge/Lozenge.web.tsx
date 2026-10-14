@@ -9,6 +9,8 @@ export function Lozenge(input: LozengeProps) {
       data-testid={props.testID}
       style={{
         display: 'inline-flex',
+        // Keeps its own width inside flex columns (e.g. Stack) instead of stretching.
+        width: 'fit-content',
         boxSizing: 'border-box',
         maxWidth: props.maxWidth ?? 200,
         padding: `0 ${t.paddingX}px`,

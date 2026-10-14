@@ -24,6 +24,8 @@ export function Badge(input: BadgeProps) {
       data-testid={props.testID}
       style={{
         display: 'inline-block',
+        // Keeps its own width inside flex columns (e.g. Stack) instead of stretching.
+        width: 'fit-content',
         boxSizing: 'border-box',
         minWidth: t.minWidth,
         padding: `0 ${t.paddingX}px`,

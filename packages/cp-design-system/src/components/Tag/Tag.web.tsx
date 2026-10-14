@@ -18,6 +18,8 @@ export function Tag(input: TagProps) {
           exit={{ opacity: 0, scale: 0.8, transition: exit }}
           style={{
             display: 'inline-flex',
+            // Keeps its own width inside flex columns (e.g. Stack) instead of stretching.
+            width: 'fit-content',
             alignItems: 'center',
             boxSizing: 'border-box',
             height: t.height,

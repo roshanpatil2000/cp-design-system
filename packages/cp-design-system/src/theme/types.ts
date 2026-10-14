@@ -45,6 +45,7 @@ import type { PaginationProps } from '../components/Pagination/Pagination.types'
 import type { PopupProps, PopupTokens } from '../components/Popup/Popup.types';
 import type { TabsProps, TabsTokens } from '../components/Tabs/Tabs.types';
 import type { TooltipProps, TooltipTokens } from '../components/Tooltip/Tooltip.types';
+import type { CarouselProps, CarouselTokens } from '../components/Carousel/Carousel.types';
 import type { ColorToken } from '../tokens/atlassian/colors.generated';
 import type { atlassianOpacity } from '../tokens/atlassian/colors.generated';
 import type { atlassianSpace } from '../tokens/atlassian/spacing.generated';
@@ -113,6 +114,7 @@ export interface ComponentTheme<Props, Tokens> {
  * as it is built.
  */
 export interface ComponentThemes {
+  Carousel?: ComponentTheme<CarouselProps, CarouselTokens>;
   Drawer?: ComponentTheme<DrawerProps, DrawerTokens>;
   /** Only `defaultProps` apply; it uses Button and menu styling. */
   DropdownMenu?: Pick<ComponentTheme<DropdownMenuProps, never>, 'defaultProps'>;

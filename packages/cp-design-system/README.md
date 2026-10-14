@@ -141,6 +141,7 @@ Each component is built and tested on both platforms before release.
 | Status        | Component                                 |
 | ------------- | ----------------------------------------- |
 | Ready (0.5.1) | All 40 components: see the sections below |
+| Next release  | [Carousel](#carousel)                     |
 
 ### Text field
 
@@ -640,6 +641,37 @@ import { Breadcrumbs, Pagination, Tabs } from 'cp-design-system';
 | `Tabs`        | An underline that springs to the selected tab, with a fading panel. Web: arrow, Home and End keys with roving focus. Native: the tab row scrolls. `shouldFitContainer` gives equal widths |
 | `Breadcrumbs` | The last item is the current page. Long trails collapse into "…", which expands in place                                                                                                  |
 | `Pagination`  | Previous and next arrows and page numbers, with "…" for long ranges. The current page uses `aria-current`                                                                                 |
+
+### Carousel
+
+A row of slides you swipe, drag, click through or move with the arrow keys. Slides snap with a spring. With a narrower `slideWidth`, the neighbours peek in, slightly scaled and faded as you drag.
+
+```tsx
+import { Carousel } from 'cp-design-system';
+
+<Carousel label="Featured projects" slideWidth="85%">
+  {projects.map((p) => (
+    <ProjectCard key={p.id} project={p} />
+  ))}
+</Carousel>
+
+<Carousel label="Highlights" loop autoPlay={5000}>
+  {slides}
+</Carousel>
+```
+
+| Prop                     | Default                    |                                                                                        |
+| ------------------------ | -------------------------- | -------------------------------------------------------------------------------------- |
+| `label`                  | (required)                 | Accessible name of the carousel                                                        |
+| `index` / `defaultIndex` | `0`                        | Controlled or uncontrolled current slide; `onIndexChange` reports changes              |
+| `slideWidth`             | `'100%'`                   | A percentage, so neighbours peek in, or pixels                                         |
+| `space`                  | `'200'`                    | Gap between slides                                                                     |
+| `showDots`               | `true`                     | Step dots (they're tabs, so they also jump to a slide)                                 |
+| `showArrows`             | `true` web, `false` native | Previous and next buttons                                                              |
+| `loop`                   | `false`                    | Wrap from the last slide to the first                                                  |
+| `autoPlay`               | off                        | Milliseconds between slides. Pauses on hover, focus and touch; off with reduced motion |
+
+Accessibility on web: the carousel is labelled as a carousel, each slide as "Slide 2 of 5", and only the current slide is exposed to assistive tech and the Tab key. Slide changes are announced unless autoplay is running. On native, a pan gesture drives the drag on the UI thread, and vertical page scrolling still works over the carousel. Theme key: `components.Carousel` (tokens `inactiveScale`, `inactiveOpacity`, `dotsGap`, `swipeThreshold`, `swipeVelocity`).
 
 ## License
 

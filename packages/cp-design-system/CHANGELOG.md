@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1 (2026-10-14)
+
+### Fixed
+
+- README: removed a stale "Next release" row from the component status table. No code changes.
+
 ## 0.6.0 (2026-10-14)
 
 ### Added

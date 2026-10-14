@@ -141,7 +141,6 @@ Each component is built and tested on both platforms before release.
 | Status        | Component                                                                  |
 | ------------- | -------------------------------------------------------------------------- |
 | Ready (0.6.0) | All 41 components, including [Carousel](#carousel): see the sections below |
-| Next release  | [Carousel](#carousel)                                                      |
 
 ### Text field
 

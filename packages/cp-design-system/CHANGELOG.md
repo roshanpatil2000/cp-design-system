@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.6.0 (2026-10-14)
+
+### Added
+
+- **Carousel.** Swipeable slides with spring snapping.
+  - With a percentage `slideWidth`, neighbouring slides peek in, scaling and fading as you drag.
+  - Dots you can select, arrows, `loop`, and `autoPlay`. Autoplay pauses on hover, focus and touch, and is off with reduced motion.
+  - On web: arrow keys, plus carousel and slide labels for screen readers.
+  - On native: dragging runs on the UI thread, and vertical scrolling of the page still works over it.
+
+### Fixed
+
+- **Lozenge, Badge and Tag (web)** keep their own width inside flex columns such as Stack instead of stretching.
+
 ## 0.5.1 (2026-10-13)
 
 ### Fixed

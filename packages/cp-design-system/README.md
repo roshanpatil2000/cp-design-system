@@ -138,10 +138,10 @@ import { atlassianLightColors, atlassianSpace, atlassianEasings } from 'cp-desig
 
 Each component is built and tested on both platforms before release.
 
-| Status        | Component                                 |
-| ------------- | ----------------------------------------- |
-| Ready (0.5.1) | All 40 components: see the sections below |
-| Next release  | [Carousel](#carousel)                     |
+| Status        | Component                                                                  |
+| ------------- | -------------------------------------------------------------------------- |
+| Ready (0.6.0) | All 41 components, including [Carousel](#carousel): see the sections below |
+| Next release  | [Carousel](#carousel)                                                      |
 
 ### Text field
 

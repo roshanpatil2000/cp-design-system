@@ -193,6 +193,29 @@ describe('Drawer (web)', () => {
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
   });
 
+  it('keeps focus on the trigger when closed before it focuses its content', async () => {
+    function Demo() {
+      const [open, setOpen] = useState(false);
+      return (
+        <>
+          <button onClick={() => setOpen(true)}>Open drawer</button>
+          <Drawer isOpen={open} onClose={() => setOpen(false)} title="Settings">
+            <input aria-label="Name" />
+          </Drawer>
+        </>
+      );
+    }
+    // Full motion keeps the panel mounted while it slides out.
+    renderThemed(<Demo />, { motion: 'full' });
+    const opener = screen.getByRole('button', { name: 'Open drawer' });
+    opener.focus();
+    // Open and close within one frame, before the drawer moves focus inside.
+    fireEvent.click(opener);
+    fireEvent.keyDown(document, { key: 'Escape' });
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    expect(document.activeElement).toBe(opener);
+  });
+
   it('slides from the chosen side with the chosen width', () => {
     renderThemed(
       <Drawer isOpen onClose={() => {}} label="Panel" placement="right" width="wide" testID="d">

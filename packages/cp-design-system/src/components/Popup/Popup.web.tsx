@@ -36,7 +36,9 @@ export function PopupBase(
     if (isOpen) {
       wasOpen.current = true;
       if (props.shouldFocusContent ?? true) {
-        requestAnimationFrame(() => focusInto(panelRef.current));
+        // Cancelled if the popup closes first, so focus isn't pulled into the exiting panel.
+        const frame = requestAnimationFrame(() => focusInto(panelRef.current));
+        return () => cancelAnimationFrame(frame);
       }
     } else if (wasOpen.current) {
       wasOpen.current = false;

@@ -1,6 +1,6 @@
 {
   "name": "cp-design-system",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Animated React and React Native UI component library on Atlassian design tokens: 41 components, one API for web, iOS, Android and Expo, with brand theming and dark mode.",
   "license": "MIT",
   "author": {

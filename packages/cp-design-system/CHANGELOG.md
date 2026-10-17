@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.2 (2026-10-17)
+
+### Changed
+
+- **npm page and docs.** New description and keywords, and a homepage pointing at the live Storybook docs. The README gains badges, a current quick start, a linked component index and an FAQ.
+- **`llms.txt`** now ships with the package so AI assistants can describe and use the library correctly.
+- No code changes.
+
 ## 0.6.1 (2026-10-14)
 
 ### Fixed

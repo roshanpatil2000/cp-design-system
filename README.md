@@ -1,8 +1,10 @@
 # cp-design-system
 
-[![npm](https://img.shields.io/npm/v/cp-design-system)](https://www.npmjs.com/package/cp-design-system) [![CI](https://github.com/roshanpatil2000/cp-design-system/actions/workflows/ci.yml/badge.svg)](https://github.com/roshanpatil2000/cp-design-system/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/cp-design-system)](LICENSE)
+[![npm](https://img.shields.io/npm/v/cp-design-system)](https://www.npmjs.com/package/cp-design-system) [![downloads](https://img.shields.io/npm/dm/cp-design-system)](https://www.npmjs.com/package/cp-design-system) [![CI](https://github.com/roshanpatil2000/cp-design-system/actions/workflows/ci.yml/badge.svg)](https://github.com/roshanpatil2000/cp-design-system/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/cp-design-system)](LICENSE)
 
 Animated, brand-themable design system for React (web) and React Native, built on Atlassian's design tokens. **41 components**, one API on both platforms. Published to npm as [`cp-design-system`](https://www.npmjs.com/package/cp-design-system); full component docs are in [packages/cp-design-system/README.md](packages/cp-design-system/README.md).
+
+**[Live demos and docs (Storybook)](https://roshanpatil2000.github.io/cp-design-system/)**
 
 ```bash
 yarn add cp-design-system

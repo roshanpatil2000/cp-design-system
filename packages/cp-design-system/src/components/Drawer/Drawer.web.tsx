@@ -30,11 +30,13 @@ export function Drawer(input: DrawerProps) {
     const previous = document.activeElement as HTMLElement | null;
     const overflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    requestAnimationFrame(() => focusInto(panelRef.current));
+    const frame = requestAnimationFrame(() => focusInto(panelRef.current));
     // Escape works even before focus has moved into the drawer.
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onCloseRef.current();
     document.addEventListener('keydown', onKey);
     return () => {
+      // A drawer closed before that frame must not pull focus back into the exiting panel.
+      cancelAnimationFrame(frame);
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = overflow;
       previous?.focus?.({ preventScroll: true });

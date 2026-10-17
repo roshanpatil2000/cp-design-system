@@ -1,35 +1,69 @@
 # cp-design-system
 
-An animated, brand-themable design system for **React (web)** and **React Native**, built on [Atlassian's design tokens](https://atlassian.design/foundations/tokens/design-tokens).
+[![npm version](https://img.shields.io/npm/v/cp-design-system)](https://www.npmjs.com/package/cp-design-system) [![npm downloads](https://img.shields.io/npm/dm/cp-design-system)](https://www.npmjs.com/package/cp-design-system) [![CI](https://github.com/roshanpatil2000/cp-design-system/actions/workflows/ci.yml/badge.svg)](https://github.com/roshanpatil2000/cp-design-system/actions/workflows/ci.yml) [![types](https://img.shields.io/npm/types/cp-design-system)](https://www.npmjs.com/package/cp-design-system) [![license](https://img.shields.io/npm/l/cp-design-system)](https://github.com/roshanpatil2000/cp-design-system/blob/main/LICENSE)
 
-- **Atlassian's design language.** About 340 semantic colors (light and dark), spacing, radius, typography and motion, generated from `@atlaskit/tokens`. Atlaskit itself is not a runtime dependency.
-- **One API, all platforms.** Each component renders with the DOM on the web and with native views on iOS and Android.
-- **Motion built in.** Springs run on Reanimated (native) and Motion (web), driven by the same tokens. The OS "reduce motion" setting is respected automatically.
-- **Your brand, not ours.** One brand color re-themes every brand, selection, focus and link token in both modes, with WCAG contrast enforced. Every component can be restyled globally or per instance.
+**An animated UI component library for React (web) and React Native (iOS, Android, Expo), with one API on all three.** It has 41 accessible, brand-themable components built on [Atlassian's design tokens](https://atlassian.design/foundations/tokens/design-tokens), and supports dark mode, reduced motion and TypeScript.
 
-> **Status:** 0.2.0 ships the theme and motion foundation, **Button** and **Toggle**. More components are added one at a time; see [Components](#components) and the [changelog](https://github.com/roshanpatil2000/cp-design-system/blob/main/packages/cp-design-system/CHANGELOG.md).
+**[Live demos and docs](https://roshanpatil2000.github.io/cp-design-system/)** · [GitHub](https://github.com/roshanpatil2000/cp-design-system) · [Changelog](https://github.com/roshanpatil2000/cp-design-system/blob/main/packages/cp-design-system/CHANGELOG.md)
 
-## One API, all platforms
-
-![The same settings screen, with a text field, toggles and buttons, rendered on the web, iOS and Android](https://raw.githubusercontent.com/roshanpatil2000/cp-design-system/main/docs/images/one-api-all-platforms.png)
-
-You write it once:
+![The same project settings screen, with breadcrumbs, avatars, tabs, a text field, a select, a toggle, a checkbox, a progress bar and a split button, rendered on the web, iOS and Android](https://raw.githubusercontent.com/roshanpatil2000/cp-design-system/main/docs/images/one-api-all-platforms.png)
 
 ```tsx
-import { Button, TextField, Toggle } from 'cp-design-system';
+import { Button, Select, Tabs, TextField, Toggle, useFlags } from 'cp-design-system';
 
-<TextField label="Display name" defaultValue="Roshan Patil" maxCharacters={30} />
-<Toggle label="Wi-Fi" defaultChecked />
-<Toggle label="Dark mode" size="large" appearance="brand" />
-<Button appearance="primary" onPress={save}>Save</Button>
+// Rendered inside <ThemeProvider> and <FlagProvider> (see below).
+function Settings() {
+  const { showFlag } = useFlags();
+  return (
+    <>
+      <Tabs
+        tabs={[
+          { id: 'general', label: 'General' },
+          { id: 'members', label: 'Members' },
+        ]}
+      />
+      <TextField label="Project name" defaultValue="Apollo" />
+      <Select
+        label="Visibility"
+        options={[
+          { value: 'team', label: 'Team' },
+          { value: 'public', label: 'Public' },
+        ]}
+      />
+      <Toggle label="Email updates" defaultChecked />
+      <Button
+        appearance="primary"
+        onPress={() => showFlag({ title: 'Saved', appearance: 'success' })}
+      >
+        Save
+      </Button>
+    </>
+  );
+}
 ```
 
-How each platform renders it:
+The same code renders real DOM elements animated with Motion on the web, and native views animated on the UI thread with Reanimated and Gesture Handler on iOS and Android. Your bundler picks the right build automatically, and you don't need `react-native-web`.
 
-- **Web:** real `<button>` elements, animated with Motion.
-- **iOS and Android:** native views, animated on the UI thread with Reanimated and Gesture Handler.
+## Why cp-design-system
 
-Your bundler picks the right build automatically.
+- **One API, all platforms.** You write a screen once and it's native on web, iOS and Android, with identical props and behaviour.
+- **Atlassian's design language.** It includes about 340 semantic colors (light and dark), plus spacing, radius, typography and motion, generated from `@atlaskit/tokens`. Atlaskit is not a runtime dependency.
+- **Your brand.** One brand color re-themes every brand, selection, focus and link token in both modes, with WCAG contrast enforced. Every component can be restyled globally or per instance.
+- **Motion built in.** Springs, gestures and micro-interactions (swipe-to-dismiss toasts, springy toggles, sliding tab indicators, a peeking carousel) respect the OS "reduce motion" setting.
+- **Accessible.** It uses the right roles and states, keyboard support and focus management on web, and screen-reader labels and actions on native.
+- **Tested.** Each component has web tests (Vitest) and native tests (Jest), and is checked in Storybook and on iOS and Android.
+
+## Components
+
+| Group           | Components                                                                                                                                                   |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Building blocks | [Box, Stack, Inline, Text, Heading, Icon, Pressable](#building-blocks)                                                                                       |
+| Actions         | [Button](#button), [IconButton, LinkButton, SplitButton](#actions)                                                                                           |
+| Forms           | [TextField](#text-field), [Checkbox](#checkbox), [RadioGroup](#radio-group), [Toggle](#toggle), [Select, TextArea, Range (slider), Field](#more-form-fields) |
+| Feedback        | [Flag (toast)](#flag-toast), [Banner, SectionMessage, Spinner, ProgressBar, ProgressIndicator, Lozenge, Badge, Tag, Skeleton, EmptyState](#feedback)         |
+| Overlays        | [Modal dialog](#modal-dialog), [Drawer (bottom sheet), Popup, InlineDialog, Tooltip, DropdownMenu](#more-overlays)                                           |
+| Navigation      | [Tabs, Breadcrumbs, Pagination](#navigation)                                                                                                                 |
+| Display         | [Carousel](#carousel), [Avatar, AvatarGroup](#people)                                                                                                        |
 
 ## Install
 
@@ -134,13 +168,9 @@ The raw Atlassian tokens are available without React:
 import { atlassianLightColors, atlassianSpace, atlassianEasings } from 'cp-design-system/tokens';
 ```
 
-## Components
+## Component reference
 
-Each component is built and tested on both platforms before release.
-
-| Status        | Component                                                                  |
-| ------------- | -------------------------------------------------------------------------- |
-| Ready (0.6.1) | All 41 components, including [Carousel](#carousel): see the sections below |
+Each component is built and tested on both platforms (web, iOS and Android).
 
 ### Text field
 
@@ -671,6 +701,48 @@ import { Carousel } from 'cp-design-system';
 | `autoPlay`               | off                        | Milliseconds between slides. Pauses on hover, focus and touch; off with reduced motion |
 
 Accessibility on web: the carousel is labelled as a carousel, each slide as "Slide 2 of 5", and only the current slide is exposed to assistive tech and the Tab key. Slide changes are announced unless autoplay is running. On native, a pan gesture drives the drag on the UI thread, and vertical page scrolling still works over the carousel. Theme key: `components.Carousel` (tokens `inactiveScale`, `inactiveOpacity`, `dotsGap`, `swipeThreshold`, `swipeVelocity`).
+
+## FAQ
+
+### Is this a React Native UI library or a React web UI library?
+
+Both. `cp-design-system` ships two builds from one source. React DOM apps (Vite, Next.js, Create React App, Remix) get a web build animated with Motion. React Native and Expo apps get a native build animated with Reanimated. The import is the same: `import { Button } from 'cp-design-system'`.
+
+### Does it work with Expo?
+
+Yes, including Expo Go. Install `react-native-reanimated`, `react-native-worklets` and `react-native-gesture-handler` with `npx expo install`, and wrap your app in `ThemeProvider`. The demo app in the repo runs on Expo SDK 57.
+
+### Do I need react-native-web?
+
+No. Web apps use real DOM components, so the web build never imports React Native.
+
+### Does it work with Next.js?
+
+Yes. The components use hooks and context, so render them from client components (`'use client'`).
+
+### How do I change the brand color or theme?
+
+Pass one color: `createTheme({ brand: '#7C3AED' })`. That re-themes every brand, focus, selection and link token in light and dark mode, and keeps them WCAG-compliant. You can also override any Atlassian token, the radius, fonts and springs. Each component accepts `tokens` and `motion` props, and theme-wide defaults go under `createTheme({ components })`.
+
+### Does it support dark mode?
+
+Yes. `<ThemeProvider colorMode="system">` follows the OS or browser setting. `'light'` and `'dark'` force a mode.
+
+### Is it accessible?
+
+Yes. Components use the right ARIA roles and states on web, with keyboard navigation and focus management in menus, modals and drawers. Native components set accessibility roles, states, labels and actions. All motion respects the "reduce motion" setting.
+
+### Is there a toast, modal, bottom sheet or select for React Native?
+
+Yes: `Flag` (toast, with swipe to dismiss), `Modal`, `Drawer` (a bottom sheet on native), `Select`, `DropdownMenu`, `Tooltip`, `Popup` and `Carousel`. They all use the same API on web.
+
+### Is it the official Atlassian Design System (Atlaskit)?
+
+No. It's an independent, MIT-licensed library that follows Atlassian's design language. Its tokens are generated from `@atlaskit/tokens`, and its components are written from scratch for both web and native. Atlaskit is not a dependency.
+
+### Does it support TypeScript?
+
+Yes. It's written in TypeScript and ships its own types, so you don't need `@types` packages.
 
 ## License
 

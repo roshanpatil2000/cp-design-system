@@ -1,24 +1,49 @@
 {
   "name": "cp-design-system",
   "version": "0.6.1",
-  "description": "Cross-platform design system for React (web) and React Native, sharing one set of tokens and component APIs.",
+  "description": "Animated React and React Native UI component library on Atlassian design tokens: 41 components, one API for web, iOS, Android and Expo, with brand theming and dark mode.",
   "license": "MIT",
-  "author": "roshanpatil2000",
+  "author": {
+    "name": "roshanpatil2000",
+    "url": "https://github.com/roshanpatil2000"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/roshanpatil2000/cp-design-system.git",
     "directory": "packages/cp-design-system"
   },
-  "homepage": "https://github.com/roshanpatil2000/cp-design-system#readme",
+  "homepage": "https://roshanpatil2000.github.io/cp-design-system/",
   "bugs": "https://github.com/roshanpatil2000/cp-design-system/issues",
   "keywords": [
-    "design-system",
     "react",
     "react-native",
     "expo",
-    "ui",
-    "components",
-    "cross-platform"
+    "design-system",
+    "ui-library",
+    "component-library",
+    "ui-components",
+    "ui-kit",
+    "cross-platform",
+    "atlassian",
+    "design-tokens",
+    "theming",
+    "dark-mode",
+    "animation",
+    "reanimated",
+    "framer-motion",
+    "motion",
+    "gesture-handler",
+    "accessibility",
+    "a11y",
+    "typescript",
+    "toast",
+    "modal",
+    "bottom-sheet",
+    "carousel",
+    "select",
+    "tabs",
+    "tooltip",
+    "avatar"
   ],
   "sideEffects": false,
   "main": "./dist/web/index.cjs",
@@ -43,7 +68,8 @@
     "dist",
     "README.md",
     "LICENSE",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "llms.txt"
   ],
   "scripts": {
     "sync-tokens": "node scripts/sync-atlassian-tokens.mjs && prettier --write src/tokens/atlassian",

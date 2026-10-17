@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write # push the version tag
+  contents: write # push the version tag and create the GitHub Release
   id-token: write # npm trusted publishing (OIDC), no NPM_TOKEN needed
 
 jobs:
@@ -57,3 +57,12 @@ jobs:
         run: |
           git tag "v${{ steps.version.outputs.version }}"
           git push origin "v${{ steps.version.outputs.version }}"
+
+      - name: Create the GitHub Release from the CHANGELOG
+        if: steps.version.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          node scripts/changelog-notes.mjs "$VERSION" > "$RUNNER_TEMP/notes.md"
+          gh release create "v$VERSION" --title "v$VERSION" --notes-file "$RUNNER_TEMP/notes.md" --verify-tag

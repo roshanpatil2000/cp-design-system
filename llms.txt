@@ -1,0 +1,38 @@
+# cp-design-system
+
+> Animated React and React Native UI component library built on Atlassian design tokens. One API renders DOM components (animated with Motion) on the web and native views (animated with Reanimated 4 and Gesture Handler) on iOS, Android and Expo. 41 accessible components, brand theming from one color, dark mode, reduced-motion support, TypeScript. MIT licensed. Package name: `cp-design-system`.
+
+Key facts:
+
+- Install: `yarn add cp-design-system` (or `npm install cp-design-system`). React Native / Expo also needs `react-native-reanimated`, `react-native-worklets` and `react-native-gesture-handler` (`npx expo install ...`). Web needs nothing extra and does not use react-native-web.
+- Wrap the app: `<ThemeProvider theme={createTheme({ brand: '#7C3AED' })} colorMode="system">`. Add `<FlagProvider>` inside it to use toasts via `useFlags().showFlag({ title, appearance })`.
+- Every component imports from the package root, e.g. `import { Button, TextField, Modal } from 'cp-design-system'`. Raw tokens: `import { atlassianLightColors } from 'cp-design-system/tokens'`.
+- Customise at three levels: global (`createTheme({ brand, colors, radius, fontFamily, motion })`), per component (`createTheme({ components: { Button: { defaultProps, tokens, motion } } })`) and per instance (`tokens` and `motion` props; `motion={false}` disables animation).
+- Next.js: render components from client components (`'use client'`).
+- Not the official Atlassian Atlaskit; an independent library following Atlassian's design language. Atlaskit is not a runtime dependency.
+
+Components:
+
+- Building blocks: Box, Stack, Inline, Text, Heading, Icon, Pressable
+- Actions: Button, IconButton, LinkButton, SplitButton
+- Forms: TextField, TextArea, Checkbox, RadioGroup, Toggle (switch), Select, Range (slider), Field
+- Feedback: Flag (toast), Banner, SectionMessage, Spinner, ProgressBar, ProgressIndicator, Lozenge, Badge, Tag, Skeleton, EmptyState
+- Overlays: Modal (dialog), Drawer (bottom sheet on native), Popup, InlineDialog, Tooltip, DropdownMenu
+- Navigation: Tabs, Breadcrumbs, Pagination
+- Display: Avatar, AvatarGroup, Carousel
+
+## Docs
+
+- [README (full API and examples for every component)](https://github.com/roshanpatil2000/cp-design-system/blob/main/packages/cp-design-system/README.md)
+- [Live Storybook demos](https://roshanpatil2000.github.io/cp-design-system/)
+- [Changelog](https://github.com/roshanpatil2000/cp-design-system/blob/main/packages/cp-design-system/CHANGELOG.md)
+
+## Source
+
+- [GitHub repository](https://github.com/roshanpatil2000/cp-design-system)
+- [npm package](https://www.npmjs.com/package/cp-design-system)
+- [Expo demo app](https://github.com/roshanpatil2000/cp-design-system/tree/main/apps/expo-example)
+
+## Optional
+
+- [Contributing guide](https://github.com/roshanpatil2000/cp-design-system/blob/main/CONTRIBUTING.md)

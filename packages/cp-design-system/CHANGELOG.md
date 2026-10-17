@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.3 (2026-10-17)
+
+### Fixed
+
+- **Drawer and Popup (web)** no longer lose keyboard focus when closed right after opening. Focus now returns to the trigger instead of falling to the page body.
+
 ## 0.6.2 (2026-10-17)
 
 ### Changed
